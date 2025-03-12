@@ -1,69 +1,149 @@
-/* styles.css */
-
+/* Apply a consistent font and background color */
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
+    font-family: Arial, sans-serif;
+    background-color: #F6F8D5;
+    color: #205781;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navigation bar styling */
+.navbar {
+    background-color: #205781;
+    padding: 10px 20px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    height: 100vh;
-    margin: 2;
 }
 
-h2 {
-    color: #fff;
-    text-align: center;
-    margin-bottom: 20px;
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
 }
 
-form {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    width: 300px;
+.navbar ul li {
+    margin-right: 20px;
 }
 
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+.navbar ul li a {
+    color: #F6F8D5;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
     border-radius: 5px;
-    transition: border-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
-    border-color: #6a11cb;
-    outline: none;
+.navbar ul li a:hover {
+    background-color: #4F959D;
+}
+
+/* Logout button */
+.navbar ul li .logout {
+    color: #FFCCCB; /* Light red for logout */
+    font-weight: bold;
+}
+
+.navbar ul li .logout:hover {
+    background-color: white;
+    color: #FF6347; /* Tomato red */
+}
+
+/* Responsive Navigation */
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar ul li {
+        margin: 10px 0;
+    }
+}
+
+/* Center Content */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+    border: 2px solid #205781;
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #4F959D;
+}
+
+/* Form container */
+form {
+    background-color: white;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #98D2C0;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #6a11cb;
+    background-color: #4F959D;
     color: white;
+    padding: 10px;
+    margin-top: 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #2575fc;
-    transform: translateY(-2px);
+    background-color: #205781;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+/* Centering form elements */
+form input, form select, form button {
+    display: block;
+    margin: 10px 0;
 }
 
-ul li {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
+/* Adjustments for login page */
+form.login {
+    max-width: 350px;
+}
+
+h1.login-title {
+    color: #98D2C0;
 }

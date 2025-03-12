@@ -1,0 +1,1 @@
+Added functionality of role based login along with a colour palette and Css added into it along with the map using leaflet  
