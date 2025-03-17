@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('home.home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+            <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+        </ul>
+    </nav>
+</body>
+</html>

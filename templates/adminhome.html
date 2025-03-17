@@ -6,17 +6,16 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    
 </head>
 <body>
 
     <nav class="navbar">
         <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Users</a></li>
-            <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            <li><a href="{{ url_for('home.home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+            <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
         </ul>
     </nav>
 

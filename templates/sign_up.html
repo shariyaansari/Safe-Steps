@@ -1,22 +1,26 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
-    <link rel="stylesheet" href="./static/styles.css">
-</head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
   <body>
-    <nav>
-      <ul>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Create account</a></li>
-      </ul>
-    </nav>
-    <h1>Create an Account</h1>
     
-    <form action="/register" method="post">
+    <h1>Create an Account</h1>
+
+    <!-- Display flashed messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p class="flash-message {{ category }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('auth.register') }}" method="post">
       <label for="username">Username:</label>
       <input type="text" name="username" required />
 
@@ -33,6 +37,11 @@
       </select>
 
       <button type="submit">Register</button>
+
+      <!-- Sign-in link below the Register button -->
+      <p class="signin-text">
+        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
+      </p>
     </form>
   </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
+            <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+        </ul>
+    </nav>
+    
+
+    <h1>Parent Dashboard</h1>
+    
+    <div class="content">
+        <h2>View Safety Map</h2>
+        <p>Check the safety zones and crime heatmap in your area.</p>
+        <div id="map"></div>
+    </div>
+
+    <!-- Include Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Include your custom JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

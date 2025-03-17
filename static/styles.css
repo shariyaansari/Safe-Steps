@@ -147,3 +147,57 @@ form.login {
 h1.login-title {
     color: #98D2C0;
 }
+
+/* Align the links properly */
+.top-links {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 16px;
+}
+
+/* Ensure proper spacing between links */
+.top-links a {
+    display: block;
+    margin-bottom: 5px;
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.top-links a:hover {
+    text-decoration: underline;
+}
+.signup-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.signup-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+
+.signin-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.signin-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signin-text a:hover {
+    text-decoration: underline;
+}
+
