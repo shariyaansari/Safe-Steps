@@ -101,8 +101,13 @@
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
+<<<<<<< HEAD
 from flask import Flask, jsonify, Blueprint, render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user
+=======
+from flask import Flask, jsonify
+from flask_login import LoginManager
+>>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
 from models import db, Users
 from database import init_db
 from routes.auth import auth_bp, create_admin_if_not_exists
@@ -122,8 +127,20 @@ login_manager.login_view = "auth.login"
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
+<<<<<<< HEAD
 # Default route for the root URL
 
+=======
+@app.route('/get_reports')
+def get_reports():
+    reports = [
+        {"lat": 19.075, "lng": 72.885},
+        {"lat": 19.0755, "lng": 72.8852},
+        {"lat": 19.085, "lng": 72.890},
+        {"lat": 19.090, "lng": 72.885},
+    ]
+    return jsonify(reports)
+>>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
 
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix="/auth")
