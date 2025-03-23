@@ -101,7 +101,7 @@
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
-from flask import Flask
+from flask import Flask,jsonify
 from flask_login import LoginManager
 from models import db, Users
 from database import init_db
@@ -120,6 +120,16 @@ login_manager.login_view = "auth.login"
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
+
+@app.route('/get_reports')
+def get_reports():
+    reports = [
+        {"lat": 19.075, "lng": 72.885},
+        {"lat": 19.0755, "lng": 72.8852},
+        {"lat": 19.085, "lng": 72.890},
+        {"lat": 19.090, "lng": 72.885},
+    ]
+    return jsonify(reports)
 
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix="/auth")

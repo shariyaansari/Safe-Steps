@@ -12,14 +12,14 @@
     <h1>Login to your account</h1>
     
     <!-- Display flashed messages -->
-    {% with messages = get_flashed_messages(with_categories=True) %}
+    <!-- {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         {% for category, message in messages %}
           <p class="flash-message {{ category }}">{{ message }}</p>
         {% endfor %}
       {% endif %}
     {% endwith %}
-    
+     -->
     <form action="{{ url_for('auth.login') }}" method="post">
       <label for="username">Username:</label>
       <input type="text" name="username" required />
@@ -33,6 +33,13 @@
       <p class="signup-text">
         Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up</a>
       </p>
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          {% for category, message in messages %}
+          <p class="flash-message {{ category }}" style="text-align: center;">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
     </form>
   </body>
 </html>
