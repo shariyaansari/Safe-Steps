@@ -10,3 +10,5 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=False)
     role = db.Column(db.String(50), nullable=False, default="parent")  # "admin" or "parent"
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    

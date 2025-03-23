@@ -28,7 +28,7 @@ def users():
 
 @admin_bp.route('/edit_user/<int:user_id>', methods=["GET", "POST"])
 @login_required
-def edit_users(user_id):
+def edit_user(user_id):
     user = Users.query.get_or_404(user_id)
 
     if request.method == 'POST':
@@ -40,7 +40,7 @@ def edit_users(user_id):
         flash('User updated successfully!', 'success')
         return redirect(url_for('admin.users'))  # Redirect to users list
 
-    return render_template('editUser.html', user=user)
+    return render_template('edit_user.html', user=user) 
 
 @admin_bp.route('/delete_user/<int:user_id>')
 @login_required

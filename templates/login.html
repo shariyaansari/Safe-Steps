@@ -9,8 +9,13 @@
   </head>
   <body>
     
+<<<<<<< HEAD
+    <h1>Login to your account</h1>
+    <form action="{{ url_for('auth.login') }}" method="post">
+=======
     <h1>Create an Account</h1>
     <form action="{{ url_for('auth.register') }}" method="post">
+>>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
       <label for="username">Username:</label>
       <input type="text" name="username" required />
 
@@ -36,10 +41,18 @@
       {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
           {% for category, message in messages %}
+<<<<<<< HEAD
+            <p style="text-align: center;" class="flash-message {{ category }}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+=======
            <p class="flash-message {{ category }}">{{ message }}</p>
           {% endfor %}
        {% endif %}
      {% endwith %}
+>>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
     </form>
+    
   </body>
 </html>

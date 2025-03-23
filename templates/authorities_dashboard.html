@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parent Dashboard</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -11,20 +11,16 @@
 
     <nav class="navbar">
         <ul>
-            <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
-            <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
-            <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
-            <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
+            <li><a href="{{ url_for('home.home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+            <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
             <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
         </ul>
     </nav>
-    
 
-    <h1>Parent Dashboard</h1>
-    
+    <h1>Admin Dashboard</h1>
     <div class="content">
-        <h2>View Safety Map</h2>
-        <p>Check the safety zones and crime heatmap in your area.</p>
         <div id="map"></div>
     </div>
 
