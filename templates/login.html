@@ -4,55 +4,33 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
+    <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
-    
-<<<<<<< HEAD
     <h1>Login to your account</h1>
     <form action="{{ url_for('auth.login') }}" method="post">
-=======
-    <h1>Create an Account</h1>
-    <form action="{{ url_for('auth.register') }}" method="post">
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
       <label for="username">Username:</label>
       <input type="text" name="username" required />
-
-      <label for="email">Email:</label>
-      <input type="email" name="email" required />
 
       <label for="password">Password:</label>
       <input type="password" name="password" required />
 
-      <label for="role">Role:</label>
-      <select name="role">
-        <option value="parent">Parent</option>
-        <option value="admin">Admin</option>
-      </select>
+      <button type="submit">Login</button>
 
-      <button type="submit">Register</button>
-
-      <!-- Sign-in link below the Register button -->
+      <!-- Sign-up link below the Login button -->
       <p class="signin-text">
-        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
+        Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up</a>
       </p>
+      
       <!-- Display flashed messages -->
       {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
           {% for category, message in messages %}
-<<<<<<< HEAD
             <p style="text-align: center;" class="flash-message {{ category }}">{{ message }}</p>
           {% endfor %}
         {% endif %}
       {% endwith %}
-=======
-           <p class="flash-message {{ category }}">{{ message }}</p>
-          {% endfor %}
-       {% endif %}
-     {% endwith %}
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
     </form>
-    
   </body>
 </html>
