@@ -44,10 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
     locateButton.onAdd = function () {
         var button = L.DomUtil.create("button", "locate-button");
         button.innerHTML = "📍 Find My Location";
-        button.style.backgroundColor = "white";
+        button.style.backgroundColor = "black";
         button.style.padding = "8px";
         button.style.cursor = "pointer";
-        button.style.border = "1px solid black";
+        button.style.border = "1px solid white";
         button.style.borderRadius = "5px";
         button.onclick = locateUser;
         return button;
@@ -108,21 +108,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function drawGrid(reports) {
         var groupedReports = groupReportsByGrid(reports);
-<<<<<<< HEAD
-    
-        // Ensure the grid is drawn even if there are no reports
-=======
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
         for (var lat = 19.0300; lat < 19.1100; lat += gridSize) {
             for (var lng = 72.8500; lng < 72.9300; lng += gridSize) {
                 var gridKey = lat.toFixed(3) + "," + lng.toFixed(3);
                 var reportCount = groupedReports[gridKey] ? groupedReports[gridKey] : 0;
                 var color = getColor(reportCount);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
                 var rectangle = L.rectangle([
                     [lat, lng],
                     [lat + gridSize, lng + gridSize]
@@ -133,42 +124,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     fillOpacity: 0.7,
                     crimeCount: reportCount
                 }).addTo(map);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
                 rectangle.on({
                     mouseover: highlightFeature,
                     mouseout: resetHighlight,
                     click: zoomToFeature
                 });
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
                 gridLayers.push(rectangle);
             }
         }
     }
     
 
-<<<<<<< HEAD
-    // Fetch the reports from the backend and then draw the grid
-    fetch('/get_reports')
-        .then(response => response.json())
-        .then(data => {
-            console.log("Fetched reports:", data);  // Check if data is received
-            drawGrid(data);  // Pass the data to drawGrid
-        })
-        .catch(error => console.error("Error fetching reports:", error));
-=======
     fetch('/get_reports')
         .then(response => response.json())
         .then(data => drawGrid(data))
         .catch(error => console.error("Error fetching reports:", error));
 
     drawGrid();
->>>>>>> 470bb8e79e590cb9ea6c711203ca151d06c904b4
 });
