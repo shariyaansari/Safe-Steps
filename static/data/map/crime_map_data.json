@@ -1,0 +1,73 @@
+{
+  "markers": [
+    {
+      "position": {
+        "lat": 19.0658,
+        "lng": 72.8777
+      },
+      "title": "Kurla Station",
+      "incidents": 3,
+      "intensity": 1
+    },
+    {
+      "position": {
+        "lat": 19.055,
+        "lng": 72.872
+      },
+      "title": "Nehru Nagar",
+      "incidents": 84,
+      "intensity": 10
+    },
+    {
+      "position": {
+        "lat": 19.063,
+        "lng": 72.868
+      },
+      "title": "Bkc",
+      "incidents": 44,
+      "intensity": 5
+    },
+    {
+      "position": {
+        "lat": 19.075,
+        "lng": 72.89
+      },
+      "title": "Kurla East",
+      "incidents": 32,
+      "intensity": 3
+    },
+    {
+      "position": {
+        "lat": 19.058,
+        "lng": 72.885
+      },
+      "title": "Tilak Nagar",
+      "incidents": 33,
+      "intensity": 3
+    },
+    {
+      "position": {
+        "lat": 19.07,
+        "lng": 72.88
+      },
+      "title": "Kurla West",
+      "incidents": 35,
+      "intensity": 4
+    },
+    {
+      "position": {
+        "lat": 19.0658,
+        "lng": 72.8777
+      },
+      "title": "Kurla Station Area",
+      "incidents": 82,
+      "intensity": 9
+    }
+  ],
+  "center": {
+    "lat": 19.07,
+    "lng": 72.88
+  },
+  "zoom": 14,
+  "last_updated": "2025-03-26 14:15:02"
+}

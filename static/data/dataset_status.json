@@ -1,0 +1,44 @@
+{
+  "datasets": {
+    "external_data": {
+      "columns": [
+        "date",
+        "location",
+        "crime_type",
+        "severity"
+      ],
+      "locations": 6,
+      "rows": 300,
+      "sample": [
+        {
+          "date": "2023-01-01",
+          "location": "BKC",
+          "crime_type": "Theft",
+          "severity": "Medium"
+        },
+        {
+          "date": "2023-01-02",
+          "location": "Nehru Nagar",
+          "crime_type": "Harassment",
+          "severity": "Medium"
+        },
+        {
+          "date": "2023-01-03",
+          "location": "Kurla Station Area",
+          "crime_type": "Theft",
+          "severity": "High"
+        }
+      ],
+      "status": "loaded",
+      "last_updated": "2025-03-26 04:34:38"
+    },
+    "news_analysis": {
+      "categories": 5,
+      "incidents": 10,
+      "locations": 7,
+      "status": "loaded",
+      "last_updated": "2025-03-26 04:34:38"
+    }
+  },
+  "status": "ok"
+}

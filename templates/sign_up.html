@@ -10,16 +10,6 @@
   <body>
     
     <h1>Create an Account</h1>
-
-    <!-- Display flashed messages -->
-    <!-- {% with messages = get_flashed_messages(with_categories=True) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <p class="flash-message {{ category }}">{{ message }}</p>
-        {% endfor %}
-      {% endif %}
-    {% endwith %} -->
-
     <form action="{{ url_for('auth.register') }}" method="post">
       <label for="username">Username:</label>
       <input type="text" name="username" required />
@@ -33,7 +23,7 @@
       <label for="role">Role:</label>
       <select name="role">
         <option value="parent">Parent</option>
-        <option value="admin">Admin</option>
+        <option value="authorities">Authorities</option>
       </select>
 
       <button type="submit">Register</button>

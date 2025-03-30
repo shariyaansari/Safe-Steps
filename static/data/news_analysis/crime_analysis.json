@@ -1,0 +1,101 @@
+{
+  "crime_categories": {
+    "theft": 5,
+    "robbery": 2,
+    "assault": 1,
+    "harassment": 1,
+    "vehicle_theft": 1
+  },
+  "crime_locations": {
+    "kurla station": 3,
+    "nehru nagar": 2,
+    "bkc": 2,
+    "kurla east": 3,
+    "tilak nagar": 1,
+    "kurla west": 2,
+    "kurla": 2
+  },
+  "recent_incidents": [
+    {
+      "title": "Theft reported near Kurla Station",
+      "date": "2025-03-26",
+      "location": "Kurla Station",
+      "category": "theft",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Mobile snatching incident in Nehru Nagar",
+      "date": "2025-03-24",
+      "location": "Nehru Nagar",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Vehicle theft in BKC parking lot",
+      "date": "2025-03-22",
+      "location": "Bkc",
+      "category": "theft",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Woman harassed near Kurla East",
+      "date": "2025-03-20",
+      "location": "Kurla East",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Assault case reported in Tilak Nagar",
+      "date": "2025-03-18",
+      "location": "Tilak Nagar",
+      "category": "assault",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Chain snatching incident in Kurla West",
+      "date": "2025-03-16",
+      "location": "Kurla West",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Break-in at shop in Kurla Market",
+      "date": "2025-03-14",
+      "location": "Kurla West",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Pickpocketing reported at Lokmanya Tilak Terminus",
+      "date": "2025-03-12",
+      "location": "Kurla Station",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Two arrested for mobile theft in Kurla",
+      "date": "2025-03-10",
+      "location": "Kurla",
+      "category": "theft",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    },
+    {
+      "title": "Woman's purse snatched in Chunabhatti",
+      "date": "2025-03-08",
+      "location": "Kurla East",
+      "category": "other",
+      "source": "Sample Data",
+      "url": "https://example.com/sample"
+    }
+  ],
+  "last_updated": "2025-03-26 04:34:38"
+}

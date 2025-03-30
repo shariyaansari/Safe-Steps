@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
+            <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
+            <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h2>Report an Incident</h2>
+    <form id="reportForm">
+        <label>Date:</label>
+        <input type="date" id="date" required><br>
+
+        <label>Time:</label>
+        <input type="time" id="startTime" required> to 
+        <input type="time" id="endTime" required><br>
+
+        <label>Description:</label>
+        <textarea id="description" required></textarea><br>
+
+        <label>Location:</label>
+        <p>Click on the map to select a location.</p>
+        <div id="map" style="height: 400px;"></div>
+        <input type="hidden" id="lat">
+        <input type="hidden" id="lng"><br>
+
+        <button type="submit">Submit Report</button>
+    </form>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([19.0714, 72.8856], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        var marker;
+        map.on('click', function(e) {
+            if (marker) map.removeLayer(marker);
+            marker = L.marker(e.latlng).addTo(map);
+            document.getElementById('lat').value = e.latlng.lat;
+            document.getElementById('lng').value = e.latlng.lng;
+        });
+
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var reportData = {
+                date: document.getElementById('date').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                description: document.getElementById('description').value,
+                lat: document.getElementById('lat').value,
+                lng: document.getElementById('lng').value
+            };
+
+            fetch('/submit_report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
+            <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
+            <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="settings-container">
+        <h1>Account Settings</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <p class="flash-message {{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="settings-section">
+            <h2>Profile Information</h2>
+            <form action="{{ url_for('parent.update_profile') }}" method="post">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ current_user.username }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" value="{{ current_user.phone if current_user.phone else '' }}">
+                </div>
+                
+                <button type="submit" class="btn-update">Update Profile</button>
+            </form>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Change Password</h2>
+            <form action="{{ url_for('parent.change_password') }}" method="post">
+                <div class="form-group">
+                    <label for="current_password">Current Password:</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                
+                <button type="submit" class="btn-update">Change Password</button>
+            </form>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Notification Preferences</h2>
+            <form action="{{ url_for('parent.update_notifications') }}" method="post">
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="email_notifications" name="email_notifications" 
+                           {% if current_user.email_notifications %}checked{% endif %}>
+                    <label for="email_notifications">Receive Email Notifications</label>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="sms_notifications" name="sms_notifications"
+                           {% if current_user.sms_notifications %}checked{% endif %}>
+                    <label for="sms_notifications">Receive SMS Notifications</label>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="incident_alerts" name="incident_alerts"
+                           {% if current_user.incident_alerts %}checked{% endif %}>
+                    <label for="incident_alerts">Receive Incident Alerts</label>
+                </div>
+                
+                <button type="submit" class="btn-update">Update Preferences</button>
+            </form>
+        </div>
+        
+        <div class="settings-section danger-zone">
+            <h2>Account Management</h2>
+            <p>Warning: This action cannot be undone.</p>
+            <form action="{{ url_for('parent.delete_account') }}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                <button type="submit" class="btn-danger">Delete Account</button>
+            </form>
+        </div>
+        
+        <div class="back-link">
+            <a href="{{ url_for('parent.dashboard') }}">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
