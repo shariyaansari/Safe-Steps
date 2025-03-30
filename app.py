@@ -136,10 +136,15 @@ app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(parent_bp, url_prefix="/parent")
 app.register_blueprint(news_analysis_bp)
 
+
 # Create admin user if it doesn't exist
 with app.app_context():
     create_admin_if_not_exists()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 # Initialize DB
 def init_db():
     conn = sqlite3.connect('reports.db')
@@ -152,6 +157,7 @@ def init_db():
 
 
 init_db()
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -188,6 +194,7 @@ def get_reports():
     
     return jsonify(report_list)
 
+<<<<<<< HEAD
 @app.route('/debug/routes')
 def list_routes():
     output = []
@@ -202,6 +209,8 @@ def list_routes():
 
 
 
+=======
+>>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 
 if __name__ == '__main__':
     app.run(debug=True)
