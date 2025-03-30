@@ -1,0 +1,110 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.8891,
+          19.0748
+        ]
+      },
+      "properties": {
+        "name": "Kurla",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.8777,
+          19.0658
+        ]
+      },
+      "properties": {
+        "name": "Kurla Station",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.88,
+          19.07
+        ]
+      },
+      "properties": {
+        "name": "Kurla West",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.89,
+          19.075
+        ]
+      },
+      "properties": {
+        "name": "Kurla East",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.868,
+          19.063
+        ]
+      },
+      "properties": {
+        "name": "Bkc",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.872,
+          19.055
+        ]
+      },
+      "properties": {
+        "name": "Nehru Nagar",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          72.885,
+          19.058
+        ]
+      },
+      "properties": {
+        "name": "Tilak Nagar",
+        "crime_count": 0,
+        "safety_level": "green"
+      }
+    }
+  ]
+}

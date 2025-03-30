@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .analytics-header h1 {
+            color: var(--deep-blue);
+            margin: 0;
+        }
+        .area-selector {
+            padding: 8px 12px;
+            border: 1px solid var(--teal);
+            border-radius: 4px;
+            background-color: white;
+            color: var(--deep-blue);
+        }
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .analytics-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .analytics-card h2 {
+            color: var(--deep-blue);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .trend-indicator.up {
+            color: #e74c3c;
+        }
+        .trend-indicator.down {
+            color: #2ecc71;
+        }
+        .trend-indicator span {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        @media (max-width: 768px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('home.home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+            <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
+            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="analytics-container">
+        <div class="analytics-header">
+            <h1>Crime Analytics {% if selected_area %}for {{ selected_area }}{% endif %}</h1>
+            <form action="{{ url_for('parent.analytics') }}" method="get">
+                <select name="area" class="area-selector" onchange="this.form.submit()">
+                    <option value="">All Areas</option>
+                    {% for area in kurla_areas %}
+                    <option value="{{ area }}" {% if selected_area == area %}selected{% endif %}>{{ area }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <h2>Monthly Crime Trend</h2>
+                <div class="trend-indicator {% if percent_change > 0 %}up{% else %}down{% endif %}">
+                    <span>{{ percent_change|abs|round(1) }}% {% if percent_change > 0 %}increase{% else %}decrease{% endif %}</span>
+                    from previous month
+                </div>
+                <div id="trendChart" style="height: 300px;"></div>
+            </div>
+
+            <div class="analytics-card">
+                <h2>Crime Types Distribution</h2>
+                <div id="typesChart" style="height: 300px;"></div>
+            </div>
+
+            <div class="analytics-card full-width">
+                <h2>Crime by Area</h2>
+                <div id="areaChart" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <div class="analytics-card">
+            <h2>Safety Tips</h2>
+            <ul>
+                <li>Avoid walking alone in poorly lit areas, especially at night.</li>
+                <li>Keep your valuables out of sight when in public.</li>
+                <li>Be aware of your surroundings and report suspicious activities.</li>
+                <li>Share your location with family members when traveling to unfamiliar areas.</li>
+                <li>Use designated public transportation stops and avoid unofficial services.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Monthly Trend Chart
+        const trendCtx = document.getElementById('trendChart');
+        Plotly.newPlot('trendChart', [{
+            x: JSON.parse('{{ trend_labels|tojson }}'),
+            y: JSON.parse('{{ trend_values|tojson }}'),
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {color: '#4F959D', width: 3},
+            marker: {color: '#205781', size: 8}
+        }], {
+            margin: {t: 10, r: 10, b: 40, l: 40},
+            xaxis: {title: 'Month'},
+            yaxis: {title: 'Number of Incidents'}
+        });
+
+        // Crime Types Chart
+        Plotly.newPlot('typesChart', [{
+            x: JSON.parse('{{ type_values|tojson|safe }}'),
+            y: JSON.parse('{{ type_labels|tojson }}'),
+            type: 'bar',
+            orientation: 'h',
+            marker: {color: '#98D2C0'}
+        }], {
+            margin: {t: 10, r: 10, b: 40, l: 120},
+            xaxis: {title: 'Number of Incidents'},
+            yaxis: {automargin: true}
+        });
+
+        // Area Chart
+        const areaData = JSON.parse('{{ area_data|tojson|safe }}');
+        const areaLabels = Object.keys(areaData);
+        const areaValues = areaLabels.map(area => areaData[area]);
+
+        Plotly.newPlot('areaChart', [{
+            x: areaLabels,
+            y: areaValues,
+            type: 'bar',
+            marker: {color: '#205781'}
+        }], {
+            margin: {t: 10, r: 10, b: 60, l: 40},
+            xaxis: {title: 'Area', tickangle: -45},
+            yaxis: {title: 'Number of Incidents'}
+        });
+    </script>
+</body>
+</html>
