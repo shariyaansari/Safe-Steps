@@ -1,0 +1,301 @@
+date,location,crime_type,severity
+2023-01-01,BKC,Theft,Medium
+2023-01-02,Nehru Nagar,Harassment,Medium
+2023-01-03,Kurla Station Area,Theft,High
+2023-01-04,Nehru Nagar,Pickpocketing,Medium
+2023-01-05,Nehru Nagar,Theft,High
+2023-01-06,Kurla East,Robbery,Medium
+2023-01-07,Kurla Station Area,Harassment,High
+2023-01-08,Kurla Station Area,Harassment,High
+2023-01-09,Kurla Station Area,Pickpocketing,Medium
+2023-01-10,Nehru Nagar,Burglary,Medium
+2023-01-11,BKC,Robbery,Medium
+2023-01-12,Kurla Station Area,Assault,Low
+2023-01-13,Tilak Nagar,Theft,Low
+2023-01-14,Nehru Nagar,Vehicle Theft,Low
+2023-01-15,Kurla East,Theft,High
+2023-01-16,BKC,Theft,Medium
+2023-01-17,Tilak Nagar,Assault,High
+2023-01-18,Tilak Nagar,Theft,Low
+2023-01-19,Kurla East,Robbery,Medium
+2023-01-20,BKC,Robbery,High
+2023-01-21,Nehru Nagar,Harassment,Medium
+2023-01-22,Kurla West,Pickpocketing,High
+2023-01-23,BKC,Burglary,Medium
+2023-01-24,Kurla East,Vehicle Theft,Low
+2023-01-25,Tilak Nagar,Theft,Low
+2023-01-26,Nehru Nagar,Theft,Medium
+2023-01-27,BKC,Assault,High
+2023-01-28,Kurla West,Pickpocketing,Low
+2023-01-29,Kurla West,Robbery,Low
+2023-01-30,Kurla Station Area,Vehicle Theft,Low
+2023-01-31,Kurla Station Area,Harassment,Medium
+2023-02-01,Kurla East,Robbery,Medium
+2023-02-02,BKC,Pickpocketing,High
+2023-02-03,BKC,Burglary,High
+2023-02-04,Tilak Nagar,Harassment,High
+2023-02-05,Tilak Nagar,Burglary,Medium
+2023-02-06,Tilak Nagar,Assault,Medium
+2023-02-07,Kurla Station Area,Assault,High
+2023-02-08,BKC,Theft,High
+2023-02-09,BKC,Burglary,Medium
+2023-02-10,Kurla West,Pickpocketing,High
+2023-02-11,Kurla Station Area,Vehicle Theft,Low
+2023-02-12,Nehru Nagar,Harassment,Medium
+2023-02-13,Kurla Station Area,Robbery,High
+2023-02-14,Nehru Nagar,Pickpocketing,Medium
+2023-02-15,Kurla West,Pickpocketing,Low
+2023-02-16,Kurla East,Assault,Medium
+2023-02-17,BKC,Burglary,Medium
+2023-02-18,Kurla West,Theft,Medium
+2023-02-19,BKC,Theft,Medium
+2023-02-20,Tilak Nagar,Harassment,Low
+2023-02-21,Kurla East,Assault,Medium
+2023-02-22,Kurla East,Pickpocketing,Medium
+2023-02-23,Kurla West,Vehicle Theft,High
+2023-02-24,Kurla East,Assault,Medium
+2023-02-25,Nehru Nagar,Harassment,High
+2023-02-26,Kurla East,Harassment,Low
+2023-02-27,BKC,Assault,Low
+2023-02-28,BKC,Harassment,Low
+2023-03-01,BKC,Assault,Low
+2023-03-02,BKC,Robbery,High
+2023-03-03,Nehru Nagar,Assault,Medium
+2023-03-04,Kurla Station Area,Burglary,Low
+2023-03-05,Tilak Nagar,Assault,Medium
+2023-03-06,Kurla West,Harassment,High
+2023-03-07,BKC,Burglary,High
+2023-03-08,Kurla East,Harassment,High
+2023-03-09,BKC,Theft,Low
+2023-03-10,Kurla East,Theft,Medium
+2023-03-11,Tilak Nagar,Burglary,Medium
+2023-03-12,Tilak Nagar,Robbery,Medium
+2023-03-13,Tilak Nagar,Theft,High
+2023-03-14,Kurla East,Assault,Low
+2023-03-15,BKC,Harassment,High
+2023-03-16,Tilak Nagar,Theft,High
+2023-03-17,Nehru Nagar,Theft,Medium
+2023-03-18,Kurla East,Robbery,High
+2023-03-19,Kurla East,Burglary,Medium
+2023-03-20,BKC,Burglary,Low
+2023-03-21,Kurla East,Pickpocketing,Medium
+2023-03-22,Kurla East,Robbery,Low
+2023-03-23,Tilak Nagar,Assault,Medium
+2023-03-24,BKC,Burglary,High
+2023-03-25,Tilak Nagar,Harassment,High
+2023-03-26,Tilak Nagar,Robbery,Low
+2023-03-27,BKC,Theft,Low
+2023-03-28,Kurla West,Harassment,Low
+2023-03-29,Tilak Nagar,Harassment,Medium
+2023-03-30,Nehru Nagar,Theft,Medium
+2023-03-31,Nehru Nagar,Robbery,Low
+2023-04-01,Kurla East,Theft,High
+2023-04-02,Nehru Nagar,Pickpocketing,Medium
+2023-04-03,Kurla East,Harassment,Medium
+2023-04-04,Kurla West,Vehicle Theft,Medium
+2023-04-05,BKC,Vehicle Theft,Low
+2023-04-06,BKC,Assault,Low
+2023-04-07,BKC,Burglary,Low
+2023-04-08,Nehru Nagar,Theft,Low
+2023-04-09,Kurla West,Theft,Low
+2023-04-10,Nehru Nagar,Assault,High
+2023-04-11,Nehru Nagar,Assault,High
+2023-04-12,Kurla West,Assault,Low
+2023-04-13,Kurla West,Harassment,Medium
+2023-04-14,Kurla West,Pickpocketing,Low
+2023-04-15,Kurla West,Theft,High
+2023-04-16,BKC,Harassment,High
+2023-04-17,Kurla Station Area,Assault,Medium
+2023-04-18,Kurla Station Area,Theft,High
+2023-04-19,Kurla West,Harassment,Low
+2023-04-20,Kurla Station Area,Pickpocketing,Medium
+2023-04-21,Kurla Station Area,Harassment,Low
+2023-04-22,Kurla West,Pickpocketing,Low
+2023-04-23,Kurla Station Area,Assault,Medium
+2023-04-24,Nehru Nagar,Pickpocketing,Low
+2023-04-25,Kurla East,Theft,High
+2023-04-26,Kurla East,Assault,Low
+2023-04-27,Kurla West,Theft,Medium
+2023-04-28,BKC,Vehicle Theft,Medium
+2023-04-29,Kurla West,Robbery,Medium
+2023-04-30,BKC,Pickpocketing,Low
+2023-05-01,Kurla East,Robbery,Medium
+2023-05-02,Kurla West,Robbery,Medium
+2023-05-03,Tilak Nagar,Pickpocketing,Low
+2023-05-04,Nehru Nagar,Assault,High
+2023-05-05,Kurla Station Area,Vehicle Theft,Low
+2023-05-06,BKC,Theft,Medium
+2023-05-07,Tilak Nagar,Harassment,Medium
+2023-05-08,Kurla Station Area,Theft,Low
+2023-05-09,Kurla Station Area,Harassment,High
+2023-05-10,Kurla West,Theft,Medium
+2023-05-11,Kurla Station Area,Pickpocketing,Medium
+2023-05-12,Nehru Nagar,Vehicle Theft,Medium
+2023-05-13,Tilak Nagar,Harassment,Low
+2023-05-14,Kurla Station Area,Burglary,Medium
+2023-05-15,Kurla West,Assault,High
+2023-05-16,Nehru Nagar,Theft,Medium
+2023-05-17,Kurla East,Theft,Medium
+2023-05-18,Tilak Nagar,Harassment,High
+2023-05-19,Kurla Station Area,Assault,Medium
+2023-05-20,Kurla West,Assault,Low
+2023-05-21,Kurla East,Pickpocketing,Low
+2023-05-22,Kurla East,Burglary,Low
+2023-05-23,BKC,Pickpocketing,High
+2023-05-24,Nehru Nagar,Pickpocketing,Medium
+2023-05-25,Kurla Station Area,Pickpocketing,Low
+2023-05-26,Kurla West,Pickpocketing,High
+2023-05-27,BKC,Pickpocketing,Medium
+2023-05-28,Nehru Nagar,Vehicle Theft,High
+2023-05-29,BKC,Assault,Low
+2023-05-30,Tilak Nagar,Pickpocketing,Low
+2023-05-31,Nehru Nagar,Assault,Low
+2023-06-01,Nehru Nagar,Assault,High
+2023-06-02,Kurla Station Area,Robbery,High
+2023-06-03,Nehru Nagar,Vehicle Theft,Low
+2023-06-04,BKC,Pickpocketing,High
+2023-06-05,Nehru Nagar,Theft,Low
+2023-06-06,Kurla Station Area,Harassment,Low
+2023-06-07,Kurla Station Area,Burglary,Medium
+2023-06-08,Tilak Nagar,Theft,High
+2023-06-09,BKC,Vehicle Theft,Low
+2023-06-10,Kurla East,Harassment,Low
+2023-06-11,Kurla East,Vehicle Theft,High
+2023-06-12,Nehru Nagar,Assault,Medium
+2023-06-13,Tilak Nagar,Harassment,Medium
+2023-06-14,Kurla West,Assault,Low
+2023-06-15,Nehru Nagar,Theft,High
+2023-06-16,Tilak Nagar,Theft,Medium
+2023-06-17,BKC,Harassment,High
+2023-06-18,BKC,Harassment,High
+2023-06-19,BKC,Pickpocketing,Low
+2023-06-20,BKC,Vehicle Theft,Medium
+2023-06-21,BKC,Pickpocketing,Low
+2023-06-22,Tilak Nagar,Vehicle Theft,Medium
+2023-06-23,Tilak Nagar,Pickpocketing,Medium
+2023-06-24,Kurla Station Area,Assault,Medium
+2023-06-25,Kurla East,Harassment,Medium
+2023-06-26,BKC,Theft,Medium
+2023-06-27,Kurla West,Vehicle Theft,High
+2023-06-28,Tilak Nagar,Vehicle Theft,Low
+2023-06-29,Kurla West,Theft,High
+2023-06-30,Kurla West,Pickpocketing,Medium
+2023-07-01,Kurla West,Vehicle Theft,Low
+2023-07-02,Kurla Station Area,Burglary,Medium
+2023-07-03,Tilak Nagar,Assault,Low
+2023-07-04,Kurla West,Harassment,High
+2023-07-05,BKC,Theft,Low
+2023-07-06,Nehru Nagar,Harassment,Low
+2023-07-07,Kurla West,Burglary,Low
+2023-07-08,Kurla Station Area,Vehicle Theft,Low
+2023-07-09,Tilak Nagar,Vehicle Theft,Low
+2023-07-10,Kurla Station Area,Burglary,Medium
+2023-07-11,Kurla West,Theft,Low
+2023-07-12,Tilak Nagar,Assault,Low
+2023-07-13,Nehru Nagar,Robbery,High
+2023-07-14,Kurla West,Theft,Low
+2023-07-15,Kurla Station Area,Robbery,High
+2023-07-16,Kurla East,Burglary,Medium
+2023-07-17,BKC,Pickpocketing,Low
+2023-07-18,Kurla Station Area,Robbery,High
+2023-07-19,Tilak Nagar,Assault,High
+2023-06-01,Kurla Station Area,Pickpocketing,High
+2023-06-02,Kurla Station Area,Vehicle Theft,High
+2023-06-03,Kurla Station Area,Robbery,High
+2023-06-04,Kurla Station Area,Harassment,High
+2023-06-05,Kurla Station Area,Harassment,Medium
+2023-06-06,Kurla Station Area,Theft,High
+2023-06-07,Kurla Station Area,Pickpocketing,High
+2023-06-08,Kurla Station Area,Assault,High
+2023-06-09,Kurla Station Area,Vehicle Theft,High
+2023-06-10,Kurla Station Area,Robbery,Medium
+2023-06-11,Kurla Station Area,Vehicle Theft,High
+2023-06-12,Kurla Station Area,Robbery,Medium
+2023-06-13,Kurla Station Area,Theft,High
+2023-06-14,Kurla Station Area,Pickpocketing,Medium
+2023-06-15,Kurla Station Area,Theft,Medium
+2023-06-16,Kurla Station Area,Robbery,Medium
+2023-06-17,Kurla Station Area,Burglary,High
+2023-06-18,Kurla Station Area,Burglary,High
+2023-06-19,Kurla Station Area,Assault,High
+2023-06-20,Kurla Station Area,Assault,High
+2023-06-21,Kurla Station Area,Robbery,High
+2023-06-22,Kurla Station Area,Theft,Medium
+2023-06-23,Kurla Station Area,Robbery,High
+2023-06-24,Kurla Station Area,Assault,Medium
+2023-06-25,Kurla Station Area,Harassment,High
+2023-06-26,Kurla Station Area,Harassment,Medium
+2023-06-27,Kurla Station Area,Harassment,High
+2023-06-28,Kurla Station Area,Theft,Medium
+2023-06-29,Kurla Station Area,Robbery,High
+2023-06-30,Kurla Station Area,Theft,High
+2023-07-01,Kurla Station Area,Assault,High
+2023-07-02,Kurla Station Area,Robbery,Medium
+2023-07-03,Kurla Station Area,Vehicle Theft,High
+2023-07-04,Kurla Station Area,Robbery,High
+2023-07-05,Kurla Station Area,Theft,High
+2023-07-06,Kurla Station Area,Theft,High
+2023-07-07,Kurla Station Area,Harassment,High
+2023-07-08,Kurla Station Area,Assault,High
+2023-07-09,Kurla Station Area,Theft,High
+2023-07-10,Kurla Station Area,Theft,High
+2023-07-11,Kurla Station Area,Harassment,High
+2023-07-12,Kurla Station Area,Theft,Medium
+2023-07-13,Kurla Station Area,Vehicle Theft,Medium
+2023-07-14,Kurla Station Area,Harassment,High
+2023-07-15,Kurla Station Area,Theft,High
+2023-07-16,Kurla Station Area,Theft,High
+2023-07-17,Kurla Station Area,Burglary,High
+2023-07-18,Kurla Station Area,Robbery,Medium
+2023-07-19,Kurla Station Area,Robbery,Medium
+2023-07-20,Kurla Station Area,Vehicle Theft,High
+2023-06-01,Nehru Nagar,Robbery,High
+2023-06-02,Nehru Nagar,Assault,Medium
+2023-06-03,Nehru Nagar,Theft,High
+2023-06-04,Nehru Nagar,Burglary,High
+2023-06-05,Nehru Nagar,Burglary,High
+2023-06-06,Nehru Nagar,Assault,High
+2023-06-07,Nehru Nagar,Assault,High
+2023-06-08,Nehru Nagar,Robbery,High
+2023-06-09,Nehru Nagar,Vehicle Theft,High
+2023-06-10,Nehru Nagar,Assault,High
+2023-06-11,Nehru Nagar,Theft,High
+2023-06-12,Nehru Nagar,Pickpocketing,Medium
+2023-06-13,Nehru Nagar,Vehicle Theft,Medium
+2023-06-14,Nehru Nagar,Pickpocketing,High
+2023-06-15,Nehru Nagar,Harassment,High
+2023-06-16,Nehru Nagar,Assault,High
+2023-06-17,Nehru Nagar,Robbery,Medium
+2023-06-18,Nehru Nagar,Pickpocketing,Medium
+2023-06-19,Nehru Nagar,Vehicle Theft,Medium
+2023-06-20,Nehru Nagar,Theft,High
+2023-06-21,Nehru Nagar,Theft,High
+2023-06-22,Nehru Nagar,Robbery,High
+2023-06-23,Nehru Nagar,Vehicle Theft,High
+2023-06-24,Nehru Nagar,Burglary,High
+2023-06-25,Nehru Nagar,Theft,High
+2023-06-26,Nehru Nagar,Assault,High
+2023-06-27,Nehru Nagar,Robbery,High
+2023-06-28,Nehru Nagar,Burglary,High
+2023-06-29,Nehru Nagar,Vehicle Theft,High
+2023-06-30,Nehru Nagar,Vehicle Theft,High
+2023-07-01,Nehru Nagar,Robbery,High
+2023-07-02,Nehru Nagar,Robbery,Medium
+2023-07-03,Nehru Nagar,Theft,High
+2023-07-04,Nehru Nagar,Theft,High
+2023-07-05,Nehru Nagar,Vehicle Theft,Medium
+2023-07-06,Nehru Nagar,Vehicle Theft,High
+2023-07-07,Nehru Nagar,Burglary,High
+2023-07-08,Nehru Nagar,Burglary,High
+2023-07-09,Nehru Nagar,Assault,High
+2023-07-10,Nehru Nagar,Harassment,High
+2023-07-11,Nehru Nagar,Pickpocketing,Medium
+2023-07-12,Nehru Nagar,Vehicle Theft,Medium
+2023-07-13,Nehru Nagar,Theft,Medium
+2023-07-14,Nehru Nagar,Robbery,Medium
+2023-07-15,Nehru Nagar,Theft,Medium
+2023-07-16,Nehru Nagar,Burglary,Medium
+2023-07-17,Nehru Nagar,Assault,High
+2023-07-18,Nehru Nagar,Theft,Medium
+2023-07-19,Nehru Nagar,Assault,High
+2023-07-20,Nehru Nagar,Assault,High
