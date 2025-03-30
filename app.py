@@ -111,6 +111,7 @@ from routes.auth import auth_bp, create_admin_if_not_exists
 from routes.home import home_bp
 from routes.admin import admin_bp
 from routes.parent import parent_bp
+from routes.news_analysis import news_analysis_bp
 import sqlite3
 
 
@@ -133,13 +134,17 @@ app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(home_bp, url_prefix="/home")
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(parent_bp, url_prefix="/parent")
+app.register_blueprint(news_analysis_bp)
 
 
 # Create admin user if it doesn't exist
 with app.app_context():
     create_admin_if_not_exists()
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 # Initialize DB
 def init_db():
     conn = sqlite3.connect('reports.db')
@@ -175,7 +180,8 @@ def submit_report():
 def get_reports():
     conn = sqlite3.connect('reports.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT date, startTime, endTime, description, lat, lng FROM reports")
+    cursor.execute("SELECT date, startTime, endTime, description, lat, lng FROM reports ORDER BY date DESC, startTime DESC")
+
     reports = cursor.fetchall()
     conn.close()
     
@@ -188,6 +194,23 @@ def get_reports():
     
     return jsonify(report_list)
 
+<<<<<<< HEAD
+@app.route('/debug/routes')
+def list_routes():
+    output = []
+    for rule in app.url_map.iter_rules():
+        output.append({
+            'endpoint': rule.endpoint,
+            'methods': ','.join(rule.methods),
+            'route': str(rule)
+        })
+    return {'routes': sorted(output, key=lambda x: x['endpoint'])}
+
+
+
+
+=======
+>>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 
 if __name__ == '__main__':
     app.run(debug=True)

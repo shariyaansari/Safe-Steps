@@ -3,9 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>Admin Reports</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+    <style>
+        :root {
+            --light-cream: #F6F8D5;
+            --deep-blue: #205781;
+            --teal: #4F959D;
+            --mint: #98D2C0;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-cream);
+            color: var(--dark-gray);
+        }
+
+        .navbar {
+            background-color: var(--deep-blue);
+            padding: 15px;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .navbar ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--mint);
+        }
+
+        .reports-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .report {
+            padding: 15px;
+            border-bottom: 1px solid var(--medium-gray);
+            background-color: var(--light-gray);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .report:nth-child(even) {
+            background-color: var(--mint);
+        }
+
+        .report h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--deep-blue);
+        }
+
+        .report p {
+            margin: 5px 0;
+            color: var(--dark-gray);
+        }
+
+        .report strong {
+            color: var(--teal);
+        }
+    </style>
+=======
     <title>Document</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+>>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 </head>
 <body>
     <nav class="navbar">
@@ -17,5 +106,42 @@
             <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
         </ul>
     </nav>
+
+    <div class="reports-container">
+        <h2>Crime Reports</h2>
+        <div id="reports-list">Loading reports...</div>
+    </div>
+
+    <script>
+        async function fetchReports() {
+            try {
+                const response = await fetch("/get_reports");
+                const reports = await response.json();
+                const reportsList = document.getElementById("reports-list");
+
+                if (reports.length === 0) {
+                    reportsList.innerHTML = "<p>No reports available.</p>";
+                    return;
+                }
+
+                reportsList.innerHTML = "";
+                reports.forEach(report => {
+                    const reportDiv = document.createElement("div");
+                    reportDiv.classList.add("report");
+                    reportDiv.innerHTML = `
+                        <h3>${report.date} (${report.startTime} - ${report.endTime})</h3>
+                        <p><strong>Description:</strong> ${report.description}</p>
+                        <p><strong>Location:</strong> Lat: ${report.lat}, Lng: ${report.lng}</p>
+                    `;
+                    reportsList.appendChild(reportDiv);
+                });
+            } catch (error) {
+                console.error("Error fetching reports:", error);
+                document.getElementById("reports-list").innerHTML = "<p>Error loading reports.</p>";
+            }
+        }
+
+        fetchReports();  // Fetch reports when the page loads
+    </script>
 </body>
 </html>

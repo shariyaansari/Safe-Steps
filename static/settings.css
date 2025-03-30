@@ -1,0 +1,250 @@
+/* Color palette */
+:root {
+    --light-cream: #F6F8D5;
+    --deep-blue: #205781;
+    --teal: #4F959D;
+    --mint: #98D2C0;
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --medium-gray: #e0e0e0;
+    --dark-gray: #333333;
+}
+
+body {
+    background-color: var(--light-cream);
+    color: var(--dark-gray);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: var(--deep-blue);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.navbar li {
+    margin: 0 1rem;
+}
+
+.navbar a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: var(--teal);
+}
+
+.navbar a.logout {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar a.logout:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.settings-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.settings-container h1 {
+    color: var(--deep-blue);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--mint);
+    padding-bottom: 0.5rem;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--light-gray);
+    border-radius: 6px;
+    border-left: 4px solid var(--teal);
+}
+
+.settings-section h2 {
+    color: var(--deep-blue);
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--deep-blue);
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--teal);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(79, 149, 157, 0.2);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--teal);
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.btn-update {
+    background-color: var(--teal);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-update:hover {
+    background-color: var(--deep-blue);
+}
+
+.btn-secondary {
+    background-color: var(--mint);
+    color: var(--deep-blue);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+    background-color: #85c2b0;
+}
+
+.danger-zone {
+    border-left: 4px solid #e74c3c;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.flash-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.flash-message.success {
+    background-color: var(--mint);
+    color: var(--deep-blue);
+    border-left: 4px solid var(--teal);
+}
+
+.flash-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #e57373;
+}
+
+.flash-message.info {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    border-left: 4px solid #64b5f6;
+}
+
+.back-link {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.back-link a {
+    color: var(--teal);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.back-link a:hover {
+    color: var(--deep-blue);
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navbar li {
+        margin: 0.5rem 0;
+    }
+}
