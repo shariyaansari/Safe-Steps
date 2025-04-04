@@ -4,10 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Reports</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Custom CSS for the popup -->
+    <style>
+        .map-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .map-popup .close-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            float: right;
+        }
+        #map {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+        }
+    </style>
+
 </head>
 <body>
     <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+                </svg>
+            </div>
+            SafeSteps
+        </div>
         <ul>
             <li><a href="{{ url_for('home.home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
@@ -17,9 +62,21 @@
         </ul>
     </nav>
 
-    <div class="reports-container">
-        <h2>Crime Reports</h2>
-        <div id="reports-list">Loading reports...</div>
+    <div class="content">
+        <h1>Reports Management</h1>
+        
+        <div class="welcome-banner">
+            <h3>Crime Reports Dashboard</h3>
+            <p>View and manage all reported incidents in the SafeSteps system.</p>
+        </div>
+        
+        <div class="reports-container">
+            <h2>Crime Reports</h2>
+            <div id="reports-list">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading reports...</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -30,28 +87,133 @@
                 const reportsList = document.getElementById("reports-list");
 
                 if (reports.length === 0) {
-                    reportsList.innerHTML = "<p>No reports available.</p>";
+                    reportsList.innerHTML = "<p class='no-data'>No reports available.</p>";
                     return;
                 }
 
                 reportsList.innerHTML = "";
+
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+
                 reports.forEach(report => {
+                    if (!report.id) {
+                        console.error("Error: Missing report ID", report);
+                        return;  // Skip reports with no ID
+                    }
+
                     const reportDiv = document.createElement("div");
-                    reportDiv.classList.add("report");
+                    reportDiv.classList.add("report-card");
+
+                    const isRecent = new Date(report.date) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+
                     reportDiv.innerHTML = `
-                        <h3>${report.date} (${report.startTime} - ${report.endTime})</h3>
-                        <p><strong>Description:</strong> ${report.description}</p>
-                        <p><strong>Location:</strong> Lat: ${report.lat}, Lng: ${report.lng}</p>
+                        <div class="report-header">
+                            <h3>${report.date} (${report.startTime} - ${report.endTime})</h3>
+                            ${isRecent ? '<span class="new-badge">New</span>' : ''}
+                        </div>
+                        <div class="report-body">
+                            <p><strong>Description:</strong> ${report.description}</p>
+                            <p><strong>Location:</strong> Lat: ${report.lat.toFixed(4)}, Lng: ${report.lng.toFixed(4)}</p>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-view" onclick="viewOnMap(${report.lat}, ${report.lng})">View on Map</button>
+                            <button class="btn-verify ${report.verified ? 'verified' : ''}" 
+                                    onclick="verifyReport(${report.id}, this)" 
+                                    ${report.verified ? 'disabled' : ''}>
+                                ${report.verified ? 'Verified' : 'Verify Report'}
+                            </button>
+
+                        </div>
                     `;
                     reportsList.appendChild(reportDiv);
                 });
             } catch (error) {
                 console.error("Error fetching reports:", error);
-                document.getElementById("reports-list").innerHTML = "<p>Error loading reports.</p>";
+                document.getElementById("reports-list").innerHTML = "<p class='error-message'>Error loading reports. Please try again later.</p>";
             }
+        }
+
+
+        async function verifyReport(reportId, button) {
+            if (!reportId) {
+                console.error("Error: reportId is undefined!");
+                alert("Report ID is missing. Please refresh the page.");
+                return;
+            }
+
+            if (!confirm("Are you sure you want to verify this report?")) return;
+
+            try {
+                console.log(`Verifying report ID: ${reportId}`);  // Debugging log
+
+                const response = await fetch(`/verify_report/${reportId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    button.textContent = "Verified";
+                    button.classList.add("verified");
+                    button.disabled = true;
+                } else {
+                    alert(`Failed to verify report: ${result.error}`);
+                }
+            } catch (error) {
+                console.error("Error verifying report:", error);
+                alert("Error verifying report. Check console for details.");
+            }
+        }
+
+
+        
+        // Function to view report on map (placeholder)
+        let map; // Declare map globally
+
+        function viewOnMap(lat, lng) {
+            // Show the popup
+            document.getElementById("mapPopup").style.display = "block";
+
+            // Initialize Leaflet map only if not already created
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 13); // Set default center
+
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+            } else {
+                map.setView([lat, lng], 13); // Reposition the map
+            }
+
+            // Remove old markers
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Add a marker
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("Incident Location")
+                .openPopup();
+        }
+
+        function closeMap() {
+            document.getElementById("mapPopup").style.display = "none";
         }
 
         fetchReports();  // Fetch reports when the page loads
     </script>
+    <div class="map-popup" id="mapPopup">
+        <button class="close-btn" onclick="closeMap()">X</button>
+        <h3>Incident Location</h3>
+        <div id="map"></div>
+    </div>    
+
+    <footer>
+        <p>&copy; 2025 SafeSteps. All rights reserved.</p>
+    </footer>
 </body>
 </html>

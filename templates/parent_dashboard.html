@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='parent.css') }}">
 </head>
 <body>
-
     <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              </svg>
+            </div>
+            SafeSteps
+          </div>
         <ul>
-            <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
+            <li><a href="{{ url_for('parent.dashboard') }}" class="active">Home</a></li>
             <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
             <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
             <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
@@ -19,20 +26,37 @@
         </ul>
     </nav>
     
-
     <h1>Parent Dashboard</h1>
     
     <div class="content">
         <h2>View Safety Map</h2>
-        <p>Check the safety zones and crime heatmap in your area.</p>
+        <p>Check the safety zones and crime heatmap in your area. This map shows reported incidents and safety levels across different neighborhoods.</p>
+        
         <div id="map"></div>
+        
+        <div class="map-info">
+            <h3>How to use this map</h3>
+            <p>Click on any marker to see details about reported incidents in that area. Areas are color-coded based on safety levels:</p>
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color safe"></div>
+                    <span>Safe Zone (0-3 incidents)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color moderate"></div>
+                    <span>Moderate Risk (4-7 incidents)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color high-risk"></div>
+                    <span>High Risk (8+ incidents)</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Include Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
     <!-- Include your custom JavaScript file -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>
