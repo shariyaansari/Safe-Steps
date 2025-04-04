@@ -285,3 +285,8 @@ def delete_user(user_id):
     db.session.commit()
     flash('User deleted successfully!', 'danger')
     return redirect(url_for('admin.users'))  # Redirect to users list
+
+@admin_bp.route("/news-analysis")
+@login_required
+def news_analysis():
+    return redirect(url_for('news_analysis.news_analysis_page'))

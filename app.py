@@ -48,6 +48,7 @@ def init_db():
 
 init_db()
 
+
 @app.route('/dashboard')
 def dashboard():
     return render_template('parent_dashboard.html')
@@ -63,6 +64,7 @@ def submit_report():
     conn.commit()
     conn.close()
     return jsonify({'message': 'Report submitted successfully'})
+
 
 @app.route('/get_reports')
 def get_reports():
@@ -116,6 +118,21 @@ def list_routes():
             'route': str(rule)
         })
     return {'routes': sorted(output, key=lambda x: x['endpoint'])}
+
+
+@app.route('/debug/routes')
+def list_routes():
+    output = []
+    for rule in app.url_map.iter_rules():
+        output.append({
+            'endpoint': rule.endpoint,
+            'methods': ','.join(rule.methods),
+            'route': str(rule)
+        })
+    return {'routes': sorted(output, key=lambda x: x['endpoint'])}
+
+
+
 
 
 if __name__ == '__main__':
