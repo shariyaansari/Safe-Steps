@@ -11,6 +11,10 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(250), nullable=False)
     role = db.Column(db.String(50), nullable=False, default="parent")  # "admin" or "parent"
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+    phone = db.Column(db.String(20))
+    email_notifications = db.Column(db.Integer, default=1)
+    sms_notifications = db.Column(db.Integer, default=1)
+    incident_alerts = db.Column(db.Integer, default=1)
 
 class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)

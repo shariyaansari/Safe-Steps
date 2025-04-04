@@ -101,64 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Hardcoded reports
-    // var reports = [
-    //     { lat: 19.075, lng: 72.885 },
-    //     { lat: 19.0755, lng: 72.8852 },
-    //     { lat: 19.085, lng: 72.890 },
-    //     { lat: 19.090, lng: 72.885 },
-    //     { lat: 19.0905, lng: 72.8845 },
-    //     { lat: 19.065, lng: 72.880 },
-    //     { lat: 19.0655, lng: 72.8802 },
-    //     { lat: 19.0855, lng: 72.8905 },
-    //     { lat: 19.0856, lng: 72.8906 },
-    //     { lat: 19.0857, lng: 72.8907 }
-    // ];
-
-<<<<<<< HEAD
     var gridSize = 0.005; // Defines grid cell size
-=======
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var userLat = position.coords.latitude;
-            var userLng = position.coords.longitude;
-
-            var userMarker = L.marker([userLat, userLng], {
-                title: "Your Location",
-                icon: L.icon({
-                    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                })
-            }).addTo(map);
-
-            userMarker.bindPopup("<b>You are here</b>").openPopup();
-            map.setView([userLat, userLng], 16); // Zoom in to user's location
-        }, function () {
-            alert("Unable to retrieve your location.");
-        });
-    }
-
-    // Add a button to find current location
-    var locateButton = L.control({ position: "topright" });
-
-    locateButton.onAdd = function () {
-        var button = L.DomUtil.create("button", "locate-button");
-        button.innerHTML = "📍 Find My Location";
-        button.style.backgroundColor = "black";
-        button.style.padding = "8px";
-        button.style.cursor = "pointer";
-        button.style.border = "1px solid white";
-        button.style.borderRadius = "5px";
-        button.onclick = locateUser;
-        return button;
-    };
-
-    locateButton.addTo(map);
-
-    var gridSize = 0.005;
-    var gridLayers = [];
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 
     function getColor(count) {
         if (count >= 7) return 'red';
@@ -216,15 +159,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function drawGrid(reports) {
         var groupedReports = groupReportsByGrid(reports);
-<<<<<<< HEAD
         console.log("Grouped Reports:", groupedReports);
     
         for (var lat = 19.040; lat < 19.100; lat += gridSize) {
-            for (var lng = 72.860; lng < 72.920; lng += gridSize) {
-=======
-        for (var lat = 19.0300; lat < 19.1100; lat += gridSize) {
-            for (var lng = 72.8500; lng < 72.9300; lng += gridSize) {
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
+            for (var lng = 72.830; lng < 72.970; lng += gridSize) {
                 var gridKey = lat.toFixed(3) + "," + lng.toFixed(3);
                 var reportCount = groupedReports[gridKey] || 0;
                 var color = getColor(reportCount);
@@ -245,11 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     mouseout: resetHighlight,
                     click: zoomToFeature
                 });
-<<<<<<< HEAD
-=======
-    
-                gridLayers.push(rectangle);
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
             }
         }
     }
@@ -270,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(data => {
         drawGrid(data); // Pass fetched reports
     })
-    .catch(error => console.error("Error fetching reports:", error));
+    .catch(error => console.error("Error fetching reports:", error));    
 
     // Add live location functionality
     var liveLocationMarker = null;
@@ -335,7 +268,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add event listener to the live location button
     document.getElementById('liveLocationBtn').addEventListener('click', showLiveLocation);
 
-<<<<<<< HEAD
     // News Analysis Layer functionality
     // Initialize news data layer as null
     let newsDataLayer = null;
@@ -506,12 +438,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Export map object for potential use in other scripts
     window.safeStepsMap = map;
 });
-=======
-    fetch('/get_reports')
-        .then(response => response.json())
-        .then(data => drawGrid(data))
-        .catch(error => console.error("Error fetching reports:", error));
-
-    drawGrid();
-});
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba

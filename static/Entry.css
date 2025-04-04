@@ -1,0 +1,222 @@
+/* Modern CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  padding: 20px;
+}
+
+/* Shared container styles */
+#login-container,
+#signup-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  transition: transform 0.3s ease;
+}
+
+#login-container:hover,
+#signup-container:hover {
+  transform: translateY(-5px);
+}
+
+/* Shared title styles */
+#login-title,
+#signup-title {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2575fc;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+}
+
+/* Select dropdown styling */
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.form-group select:hover {
+  border-color: #d0d0d0;
+}
+
+/* Button styles */
+#login-button,
+#signup-button {
+  width: 100%;
+  padding: 14px;
+  background-color: #6a11cb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+#login-button:hover,
+#signup-button:hover {
+  background-color: #5a0cb2;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+}
+
+#login-button:active,
+#signup-button:active {
+  transform: translateY(0);
+}
+
+/* Link text styles */
+#signup-text,
+#login-text {
+  margin-top: 24px;
+  text-align: center;
+  color: #666;
+  font-size: 15px;
+}
+
+#signup-link,
+#login-link {
+  color: #6a11cb;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+#signup-link:hover,
+#login-link:hover {
+  color: #2575fc;
+  text-decoration: underline;
+}
+
+/* Flash message styles */
+.flash-message {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error {
+  background-color: #ffe6e6;
+  color: #d32f2f;
+  border-left: 4px solid #d32f2f;
+}
+
+.success {
+  background-color: #e6ffee;
+  color: #00a86b;
+  border-left: 4px solid #00a86b;
+}
+
+.info {
+  background-color: #e6f7ff;
+  color: #0288d1;
+  border-left: 4px solid #0288d1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #login-container,
+  #signup-container {
+    padding: 30px 20px;
+  }
+  
+  #login-title,
+  #signup-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 12px 14px;
+  }
+}
+
+/* Form-specific animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#signup-form,
+#login-form {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Custom styling for the role selector */
+#role {
+  background-color: white;
+}
+
+#role option {
+  padding: 10px;
+}
+
+/* Add a subtle pattern to the background for more visual interest */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: -1;
+}

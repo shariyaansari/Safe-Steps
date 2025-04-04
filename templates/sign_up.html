@@ -5,40 +5,50 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Entry.css') }}">
   </head>
   <body>
-    
-    <h1>Create an Account</h1>
-    <form action="{{ url_for('auth.register') }}" method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" required />
+    <div id="signup-container">
+      <h1 id="signup-title">Create an Account</h1>
+      <form id="signup-form" action="{{ url_for('auth.register') }}" method="post">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
 
-      <label for="email">Email:</label>
-      <input type="email" name="email" required />
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" name="password" required />
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
 
-      <label for="role">Role:</label>
-      <select name="role">
-        <option value="parent">Parent</option>
-        <option value="authorities">Authorities</option>
-      </select>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="parent">Parent</option>
+            <option value="authorities">Authorities</option>
+          </select>
+        </div>
 
-      <button type="submit">Register</button>
+        <button id="signup-button" type="submit">Register</button>
 
-      <!-- Sign-in link below the Register button -->
-      <p class="signin-text">
-        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
-      </p>
-      {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-          {% for category, message in messages %}
-          <p class="flash-message {{ category }}" style="text-align: center;">{{ message }}</p>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-    </form>
+        <!-- Sign-in link below the Register button -->
+        <p id="login-text">
+          Already have an account? <a id="login-link" href="{{ url_for('auth.login') }}">Sign in</a>
+        </p>
+        
+        {% with messages = get_flashed_messages(with_categories=True) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="flash-message {{ category }}">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </form>
+    </div>
   </body>
 </html>

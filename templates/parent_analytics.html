@@ -4,77 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crime Analytics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .analytics-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .analytics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .analytics-header h1 {
-            color: var(--deep-blue);
-            margin: 0;
-        }
-        .area-selector {
-            padding: 8px 12px;
-            border: 1px solid var(--teal);
-            border-radius: 4px;
-            background-color: white;
-            color: var(--deep-blue);
-        }
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .analytics-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        .analytics-card h2 {
-            color: var(--deep-blue);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-        .trend-indicator {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .trend-indicator.up {
-            color: #e74c3c;
-        }
-        .trend-indicator.down {
-            color: #2ecc71;
-        }
-        .trend-indicator span {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        @media (max-width: 768px) {
-            .analytics-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              </svg>
+            </div>
+            SafeSteps
+          </div>
         <ul>
             <li><a href="{{ url_for('parent.dashboard') }}">Home</a></li>
             <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
@@ -84,9 +27,40 @@
         </ul>
     </nav>
 
-    <div class="analytics-container">
+    <div class="content">
+        <h1>Crime Analytics Dashboard</h1>
+        
+        <div class="welcome-banner">
+            <h3>Crime Insights {% if selected_area %}for {{ selected_area }}{% endif %}</h3>
+            <p>Analyze crime patterns, trends, and distributions to make data-driven safety decisions.</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Reports</h3>
+                <div class="number">{{ total_reports }}</div>
+                <div class="trend {% if percent_change > 0 %}up{% else %}down{% endif %}">
+                    {{ percent_change|abs|round(1) }}% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>High Risk Areas</h3>
+                <div class="number">{{ high_risk_areas }}</div>
+                <div class="trend">Identified this month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Daily Reports</h3>
+                <div class="number">{{ avg_daily_reports }}</div>
+                <div class="trend">Reports per day</div>
+            </div>
+            <div class="stat-card">
+                <h3>Most Common Crime</h3>
+                <div class="number">{{ most_common_crime }}</div>
+                <div class="trend">{{ most_common_percent }}% of all reports</div>
+            </div>
+        </div>
+
         <div class="analytics-header">
-            <h1>Crime Analytics {% if selected_area %}for {{ selected_area }}{% endif %}</h1>
             <form action="{{ url_for('parent.analytics') }}" method="get">
                 <select name="area" class="area-selector" onchange="this.form.submit()">
                     <option value="">All Areas</option>
@@ -97,29 +71,64 @@
             </form>
         </div>
 
-        <div class="analytics-grid">
-            <div class="analytics-card">
-                <h2>Monthly Crime Trend</h2>
+        <div class="chart-container">
+            <div class="chart-card">
+                <h3>Monthly Crime Trend</h3>
                 <div class="trend-indicator {% if percent_change > 0 %}up{% else %}down{% endif %}">
                     <span>{{ percent_change|abs|round(1) }}% {% if percent_change > 0 %}increase{% else %}decrease{% endif %}</span>
                     from previous month
                 </div>
                 <div id="trendChart" style="height: 300px;"></div>
             </div>
-
-            <div class="analytics-card">
-                <h2>Crime Types Distribution</h2>
+            <div class="chart-card">
+                <h3>Crime Types Distribution</h3>
                 <div id="typesChart" style="height: 300px;"></div>
-            </div>
-
-            <div class="analytics-card full-width">
-                <h2>Crime by Area</h2>
-                <div id="areaChart" style="height: 300px;"></div>
             </div>
         </div>
 
-        <div class="analytics-card">
-            <h2>Safety Tips</h2>
+        <div class="chart-card full-width">
+            <h3>Crime by Area</h3>
+            <div id="areaChart" style="height: 300px;"></div>
+        </div>
+        <!-- Add this after the chart-card full-width section -->
+<div class="news-analysis-container">
+    <div class="news-analysis-header">
+        <h3>News Analysis</h3>
+        <div class="last-analysis">
+            Last analysis: <span>{{ last_analysis }}</span>
+        </div>
+    </div>
+    
+    <div class="news-analysis-stats">
+        {% if news_data %}
+        <div class="news-stat">
+            <div class="stat-value">{{ news_data.total_articles_analyzed }}</div>
+            <div class="stat-label">Articles Analyzed</div>
+        </div>
+        <div class="news-stat">
+            <div class="stat-value">{{ news_data.crime_related_articles }}</div>
+            <div class="stat-label">Crime Related</div>
+        </div>
+        <div class="news-stat">
+            <div class="stat-value">{{ (news_data.crime_related_articles / news_data.total_articles_analyzed * 100)|round(1) }}%</div>
+            <div class="stat-label">Crime Percentage</div>
+        </div>
+        {% else %}
+        <div class="no-data-message">
+            No news analysis data available. Run an analysis to see results.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="news-analysis-actions">
+        <button id="runAnalysisBtn" class="btn-primary">Run News Analysis</button>
+        <span id="analysisStatus" style="margin-left: 10px; font-style: italic; color: #666;"></span>
+    </div>
+</div>
+
+
+        <div class="news-analysis-container">
+            <h3>Safety Tips & Recommendations</h3>
             <ul>
                 <li>Avoid walking alone in poorly lit areas, especially at night.</li>
                 <li>Keep your valuables out of sight when in public.</li>
@@ -127,23 +136,32 @@
                 <li>Share your location with family members when traveling to unfamiliar areas.</li>
                 <li>Use designated public transportation stops and avoid unofficial services.</li>
             </ul>
+            <!-- <div style="margin-top: 20px;">
+                <button id="runAnalysisBtn" class="btn-primary">Run News Analysis</button>
+                <span id="analysisStatus" style="margin-left: 10px; font-style: italic; color: #666;"></span>
+            </div> -->
         </div>
     </div>
 
+    <footer>
+        <p>&copy; 2025 SafeSteps. All rights reserved.</p>
+    </footer>
+
     <script>
         // Monthly Trend Chart
-        const trendCtx = document.getElementById('trendChart');
         Plotly.newPlot('trendChart', [{
             x: JSON.parse('{{ trend_labels|tojson }}'),
             y: JSON.parse('{{ trend_values|tojson }}'),
             type: 'scatter',
             mode: 'lines+markers',
-            line: {color: '#4F959D', width: 3},
-            marker: {color: '#205781', size: 8}
+            line: {color: '#6a11cb', width: 3},
+            marker: {color: '#2575fc', size: 8}
         }], {
             margin: {t: 10, r: 10, b: 40, l: 40},
             xaxis: {title: 'Month'},
-            yaxis: {title: 'Number of Incidents'}
+            yaxis: {title: 'Number of Incidents'},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         });
 
         // Crime Types Chart
@@ -152,28 +170,66 @@
             y: JSON.parse('{{ type_labels|tojson }}'),
             type: 'bar',
             orientation: 'h',
-            marker: {color: '#98D2C0'}
+            marker: {
+                color: '#2575fc',
+                opacity: 0.8
+            }
         }], {
             margin: {t: 10, r: 10, b: 40, l: 120},
             xaxis: {title: 'Number of Incidents'},
-            yaxis: {automargin: true}
+            yaxis: {automargin: true},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         });
 
         // Area Chart
         const areaData = JSON.parse('{{ area_data|tojson|safe }}');
         const areaLabels = Object.keys(areaData);
         const areaValues = areaLabels.map(area => areaData[area]);
-
+        
         Plotly.newPlot('areaChart', [{
             x: areaLabels,
             y: areaValues,
             type: 'bar',
-            marker: {color: '#205781'}
+            marker: {
+                color: areaValues.map(value => {
+                    // Color gradient based on value
+                    const normalizedValue = value / Math.max(...areaValues);
+                    return `rgba(106, 17, 203, ${0.3 + normalizedValue * 0.7})`;
+                })
+            }
         }], {
             margin: {t: 10, r: 10, b: 60, l: 40},
             xaxis: {title: 'Area', tickangle: -45},
-            yaxis: {title: 'Number of Incidents'}
+            yaxis: {title: 'Number of Incidents'},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         });
+
+        // News Analysis Button
+        document.getElementById('runAnalysisBtn').addEventListener('click', function() {
+    const statusEl = document.getElementById('analysisStatus');
+    statusEl.textContent = 'Running analysis...';
+    
+    fetch('/admin/api/run-news-analysis', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusEl.textContent = 'Analysis complete! Refresh to see updated data.';
+            statusEl.style.color = '#4CAF50';
+        } else {
+            statusEl.textContent = 'Error: ' + data.message;
+            statusEl.style.color = '#F44336';
+        }
+    })
+    .catch(error => {
+        statusEl.textContent = 'Error running analysis. Please try again.';
+        statusEl.style.color = '#F44336';
+        console.error('Error:', error);
+    });
+});
     </script>
 </body>
 </html>
