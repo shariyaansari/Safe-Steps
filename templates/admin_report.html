@@ -117,7 +117,11 @@
                         </div>
                         <div class="report-actions">
                             <button class="btn-view" onclick="viewOnMap(${report.lat}, ${report.lng})">View on Map</button>
-                            <button class="btn-verify" onclick="verifyReport(${report.id}, this)">Verify Report</button>
+                            <button class="btn-verify ${report.verified ? 'verified' : ''}"
+                                    onclick="verifyReport(${report.id}, this)"
+                                    ${report.verified ? 'disabled' : ''}>
+                                ${report.verified ? 'Verified' : 'Verify Report'}
+                            </button>
                         </div>
                     `;
                     reportsList.appendChild(reportDiv);

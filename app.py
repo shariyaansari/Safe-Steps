@@ -79,17 +79,13 @@ def get_reports():
             return jsonify([])  # No reports
 
         # ✅ Convert rows to dictionaries for debugging
-        report_list = [dict(row) for row in reports]
-        print("Query Results:", report_list)  
+        report_list = [dict(row) for row in reports]  
 
         return jsonify(report_list)
 
     except Exception as e:
         print("Error fetching reports:", e)  
         return jsonify({"error": str(e)}), 500
-
-
-
 
 @app.route('/verify_report/<int:report_id>', methods=['POST'])
 def verify_report(report_id):

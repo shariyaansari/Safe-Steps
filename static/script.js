@@ -1,10 +1,12 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Map initialization with bounds
-    var southWest = L.latLng(19.0400, 72.8600);
-    var northEast = L.latLng(19.1000, 72.9200);
-    var bounds = L.latLngBounds(southWest, northEast);
+let map;
+let markers = [];
 
-    var map = L.map('map', {
+document.addEventListener("DOMContentLoaded", function () {
+    const southWest = L.latLng(19.0400, 72.8600);
+    const northEast = L.latLng(19.1000, 72.9200);
+    const bounds = L.latLngBounds(southWest, northEast);
+
+    map = L.map('map', {
         center: [19.0714, 72.8856],
         zoom: 14,
         minZoom: 14,
@@ -17,6 +19,54 @@ document.addEventListener("DOMContentLoaded", function () {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    loadRecentReports();
+
+    async function loadRecentReports() {
+        const res = await fetch('/get_reports');
+        const reports = await res.json();
+    
+        const sorted = reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const recent = sorted.slice(0, 3);
+    
+        const container = document.getElementById('recentReportsContainer');
+        container.innerHTML = '';
+    
+        recent.forEach(report => {
+            const card = document.createElement('div');
+            card.className = 'report-card';
+    
+            card.innerHTML = `
+                <div>
+                    <strong>Date:</strong> ${report.date}<br>
+                    <strong>Time:</strong> ${report.startTime} - ${report.endTime}<br>
+                    <strong>Description:</strong> ${report.description}<br>
+                </div>
+                <button class="btn-view" onclick="focusOnMap(${report.lat}, ${report.lng}, '${report.description}')">View on Map</button>
+            `;
+    
+            container.appendChild(card);
+        });
+    }
+    
+    function focusOnMap(lat, lng, desc) {
+        if (!map) {
+            console.error("Map is not initialized yet.");
+            return;
+        }
+    
+        // Clear old markers
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+    
+        const marker = L.marker([lat, lng]).addTo(map).bindPopup(`<b>Incident:</b> ${desc}`).openPopup();
+        markers.push(marker);
+        map.flyTo([lat, lng], 15, {
+            animate: true,
+            duration: 1.5 // seconds
+        });
+    }
+    
+    
     var gridSize = 0.005; // Defines grid cell size
 
     function getColor(count) {
@@ -119,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(data => {
         drawGrid(data); // Pass fetched reports
     })
-    .catch(error => console.error("Error fetching reports:", error));    
+    .catch(error => console.error("Error fetching reports:", error)); 
 
     // Add live location functionality
     var liveLocationMarker = null;
@@ -150,7 +200,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         }).addTo(map);
                         
                         // Center map on location
-                        map.setView([lat, lng], 16);
+                        map.flyTo([lat, lng], 15, {
+                            animate: true,
+                            duration: 1.5 // seconds
+                        });                        
                     } else {
                         alert("Your location is outside the Kurla area.");
                     }
@@ -354,3 +407,31 @@ document.addEventListener("DOMContentLoaded", function () {
     // Export map object for potential use in other scripts
     window.safeStepsMap = map;
 });
+
+function focusOnMap(lat, lng, desc) {
+    if (!map) {
+        console.error("Map is not initialized yet.");
+        return;
+    }
+
+    // Scroll to the map smoothly
+    const mapElement = document.getElementById("map");
+    const yOffset = -100; // Adjust this value based on your navbar height
+    const y = mapElement.getBoundingClientRect().top + window.scrollY + yOffset;
+
+    window.scrollTo({ top: y, behavior: 'smooth' });
+
+
+    // Clear existing markers
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+
+    const marker = L.marker([lat, lng]).addTo(map).bindPopup(`<b>Incident:</b> ${desc}`).openPopup();
+    markers.push(marker);
+
+    // Smooth zoom and pan
+    map.flyTo([lat, lng], 15, {
+        animate: true,
+        duration: 1.5
+    });
+}

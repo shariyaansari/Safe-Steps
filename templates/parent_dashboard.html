@@ -6,6 +6,38 @@
     <title>Parent Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='parent.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    
+    <!-- Include Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Include your custom JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <style>    
+        .report-card {
+            background: #f8f8f8;
+            padding: 1rem;
+            border-left: 4px solid #4a90e2;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn-view {
+            padding: 6px 12px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn-view:hover {
+            background-color: #357ac7;
+        }
+    </style>   
 </head>
 <body>
     <nav class="navbar">
@@ -52,11 +84,15 @@
                 </div>
             </div>
         </div>
+        <div class="recent-reports">
+            <h2>Recent Reports</h2>
+            <div id="recentReportsContainer"></div>
+        </div>
+        
     </div>
 
-    <!-- Include Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Include your custom JavaScript file -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <footer>
+        <p>&copy; 2025 SafeSteps. All rights reserved.</p>
+    </footer>
 </body>
 </html>

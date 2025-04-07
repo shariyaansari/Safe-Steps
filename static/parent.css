@@ -724,4 +724,16 @@ h2 {
     .btn-update, .btn-danger {
         width: 100%;
     }
+
+    .recent-reports {
+        margin-top: 2rem;
+    }
+    
+    #recentReportsContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    
 }
