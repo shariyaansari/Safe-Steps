@@ -48,6 +48,7 @@ def init_db():
 
 init_db()
 
+
 @app.route('/dashboard')
 def dashboard():
     return render_template('parent_dashboard.html')
