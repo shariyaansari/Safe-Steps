@@ -25,7 +25,7 @@ def load_user(user_id):
 
 
 # Register Blueprints
-app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(auth_bp, url_prefix="/")
 app.register_blueprint(home_bp, url_prefix="/home")
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(parent_bp, url_prefix="/parent")
@@ -65,7 +65,6 @@ def submit_report():
     conn.close()
     return jsonify({'message': 'Report submitted successfully'})
 
-
 @app.route('/get_reports')
 def get_reports():
     try:
@@ -95,29 +94,28 @@ def get_reports():
 @app.route('/verify_report/<int:report_id>', methods=['POST'])
 def verify_report(report_id):
     try:
-        conn = sqlite3.connect('reports.db')
-        cursor = conn.cursor()
+        conn = sqlite3.connect("reports.db")  
+        conn.row_factory = sqlite3.Row  # Allows dictionary-like access
+        cur = conn.cursor()
 
-        cursor.execute("UPDATE reports SET verified = 1 WHERE id = ?", (report_id,))
+        cur.execute("SELECT * FROM reports WHERE id = ?", (report_id,))
+        report = cur.fetchone()
+
+        if not report:
+            return jsonify({"error": "No item with that key"}), 404  
+
+        # ✅ Convert to a dictionary for debugging
+        report_dict = dict(report)
+        print("Report found:", report_dict)  
+
+        # Update verification status
+        cur.execute("UPDATE reports SET verified = 1 WHERE id = ?", (report_id,))
         conn.commit()
-
-        conn.close()
         return jsonify({"success": True})
+
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
-
-@app.route('/debug/routes')
-def list_routes():
-    output = []
-    for rule in app.url_map.iter_rules():
-        output.append({
-            'endpoint': rule.endpoint,
-            'methods': ','.join(rule.methods),
-            'route': str(rule)
-        })
-    return {'routes': sorted(output, key=lambda x: x['endpoint'])}
+        print("Error verifying report:", e)  # 🔴 Logs actual error
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/debug/routes')
@@ -130,10 +128,8 @@ def list_routes():
             'route': str(rule)
         })
     return {'routes': sorted(output, key=lambda x: x['endpoint'])}
-
-
-
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+

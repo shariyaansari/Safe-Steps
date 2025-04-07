@@ -6,8 +6,8 @@
         "lng": 72.8777
       },
       "title": "Kurla Station",
-      "incidents": 2.0,
-      "intensity": 3
+      "incidents": 3.2,
+      "intensity": 8
     },
     {
       "position": {
@@ -15,8 +15,8 @@
         "lng": 72.872
       },
       "title": "Nehru Nagar",
-      "incidents": 4.8,
-      "intensity": 9
+      "incidents": 1.9,
+      "intensity": 4
     },
     {
       "position": {
@@ -24,8 +24,8 @@
         "lng": 72.868
       },
       "title": "Bkc",
-      "incidents": 3.0,
-      "intensity": 6
+      "incidents": 3.6,
+      "intensity": 9
     },
     {
       "position": {
@@ -33,8 +33,8 @@
         "lng": 72.89
       },
       "title": "Kurla East",
-      "incidents": 1.7,
-      "intensity": 3
+      "incidents": 1.6,
+      "intensity": 4
     },
     {
       "position": {
@@ -43,7 +43,7 @@
       },
       "title": "Tilak Nagar",
       "incidents": 2.2,
-      "intensity": 4
+      "intensity": 5
     },
     {
       "position": {
@@ -51,8 +51,8 @@
         "lng": 72.88
       },
       "title": "Kurla West",
-      "incidents": 3.4,
-      "intensity": 7
+      "incidents": 2.4,
+      "intensity": 6
     },
     {
       "position": {
@@ -60,8 +60,8 @@
         "lng": 72.8777
       },
       "title": "Kurla Station Area",
-      "incidents": 3.1,
-      "intensity": 6
+      "incidents": 3.3,
+      "intensity": 9
     }
   ],
   "center": {
@@ -69,5 +69,5 @@
     "lng": 72.88
   },
   "zoom": 14,
-  "last_updated": "2025-03-30 23:16:49"
+  "last_updated": "2025-04-07 20:27:35"
 }
