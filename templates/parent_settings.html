@@ -5,10 +5,44 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='parent.css') }}">
 </head>
 <body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function addConfirmation(formId, message) {
+                document.getElementById(formId).addEventListener("submit", function (event) {
+                    if (!confirm(message)) {
+                        event.preventDefault(); // Prevent form submission if user cancels
+                    }
+                });
+            }
+
+            function confirmDeletion() {
+                let password = document.getElementById("delete_password").value;
+                if (!password) {
+                    alert("Please enter your password to confirm account deletion.");
+                    return false;
+                }
+                return confirm("Are you sure you want to delete your account? This action cannot be undone.");
+            }
+    
+            // Add confirmation to different forms
+            addConfirmation("profile-form", "Are you sure you want to update your profile information?");
+            addConfirmation("password-form", "Are you sure you want to change your password?");
+            addConfirmation("notifications-form", "Are you sure you want to update your notification preferences?");
+        });
+    </script>
+    
     <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              </svg>
+            </div>
+            SafeSteps
+          </div>
         <ul>
             <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
             <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
@@ -31,7 +65,7 @@
         
         <div class="settings-section">
             <h2>Profile Information</h2>
-            <form action="{{ url_for('parent.update_profile') }}" method="post">
+            <form id='profile-form' action="{{ url_for('parent.update_profile') }}" method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="{{ current_user.username }}" required>
@@ -53,7 +87,7 @@
         
         <div class="settings-section">
             <h2>Change Password</h2>
-            <form action="{{ url_for('parent.change_password') }}" method="post">
+            <form id='password-form' action="{{ url_for('parent.change_password') }}" method="post">
                 <div class="form-group">
                     <label for="current_password">Current Password:</label>
                     <input type="password" id="current_password" name="current_password" required>
@@ -75,7 +109,7 @@
         
         <div class="settings-section">
             <h2>Notification Preferences</h2>
-            <form action="{{ url_for('parent.update_notifications') }}" method="post">
+            <form id='notifications-form' action="{{ url_for('parent.update_notifications') }}" method="post">
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="email_notifications" name="email_notifications" 
                            {% if current_user.email_notifications %}checked{% endif %}>
@@ -101,10 +135,14 @@
         <div class="settings-section danger-zone">
             <h2>Account Management</h2>
             <p>Warning: This action cannot be undone.</p>
-            <form action="{{ url_for('parent.delete_account') }}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            <form id="delete-account-form" action="{{ url_for('parent.delete_account') }}" method="post" onsubmit="return confirmDeletion();">
+                <div class="form-group">
+                    <label for="delete_password">Enter Password to Confirm:</label>
+                    <input type="password" id="delete_password" name="delete_password" required>
+                </div>
                 <button type="submit" class="btn-danger">Delete Account</button>
             </form>
-        </div>
+        </div>        
         
         <div class="back-link">
             <a href="{{ url_for('parent.dashboard') }}">← Back to Dashboard</a>

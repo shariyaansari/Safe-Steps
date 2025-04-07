@@ -1,0 +1,727 @@
+/* Parent Dashboard Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fb;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* Navbar styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo-text {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    padding: 0 20px;
+    flex-grow: 1;
+}
+
+.navbar li {
+    position: relative;
+}
+
+.navbar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 18px 20px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.navbar a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar a:hover::after {
+    width: 70%;
+}
+
+.navbar .logout {
+    margin-left: auto;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.navbar .logout:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Main content styling */
+h1 {
+    text-align: center;
+    margin: 30px 0;
+    color: #333;
+    font-size: 32px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    border-radius: 2px;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+h2 {
+    color: #444;
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 600;
+    border-left: 4px solid #6a11cb;
+    padding-left: 12px;
+}
+
+.content p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Map container styling */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+    transition: box-shadow 0.3s ease;
+}
+
+#map:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* Leaflet controls styling */
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-control-zoom a {
+    background-color: white !important;
+    color: #333 !important;
+    transition: all 0.3s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background-color: #f5f5f5 !important;
+    color: #6a11cb !important;
+}
+
+.leaflet-control-attribution {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+}
+
+/* Map information styling */
+.map-info {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.map-info:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.map-info h3 {
+    color: #444;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+    border-left: 4px solid #6a11cb;
+    padding-left: 12px;
+}
+
+.map-info p {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* Map legend styling */
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.safe {
+    background-color: #2ecc71;
+}
+
+.moderate {
+    background-color: #f39c12;
+}
+
+.high-risk {
+    background-color: #e74c3c;
+}
+
+/* Add a subtle animation for page load */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+    }
+    
+    .logo-container {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 0;
+    }
+    
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .navbar li {
+        width: 100%;
+    }
+    
+    .navbar a {
+        text-align: center;
+        padding: 12px 20px;
+    }
+    
+    .navbar .logout {
+        margin: 8px auto;
+        width: 90%;
+        text-align: center;
+    }
+    
+    h1 {
+        font-size: 28px;
+    }
+    
+    .content {
+        padding: 0 15px 30px;
+    }
+    
+    #map {
+        height: 350px;
+    }
+    
+    .map-legend {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Custom marker styling */
+.custom-marker {
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Leaflet popup styling */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-content {
+    margin: 13px 19px;
+    line-height: 1.6;
+}
+
+.leaflet-popup-content strong {
+    color: #6a11cb;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.leaflet-popup-tip {
+    background: white;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+    color: #6a11cb;
+}
+.navbar::before {
+    content: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 18px 20px;
+    background: rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    letter-spacing: 1px;
+  }
+  
+  /* Add logo styling */
+  .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 0 20px;
+      margin-right: 20px;
+      height: 60px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+    
+   .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #6a11cb;
+    }
+
+
+    /* REPORTS */
+/* Report Incident Form Styling */
+#reportForm {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    padding: 25px;
+    margin: 30px auto;
+    max-width: 900px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#reportForm:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+#reportForm label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 16px;
+}
+
+#reportForm input[type="date"],
+#reportForm input[type="time"] {
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    width: 200px;
+    font-size: 14px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#reportForm textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    min-height: 120px;
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#reportForm input:focus,
+#reportForm textarea:focus {
+    outline: none;
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+}
+
+#reportForm p {
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+#reportForm #map {
+    height: 400px;
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#reportForm button[type="submit"] {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(106, 17, 203, 0.2);
+}
+
+#reportForm button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+}
+
+#reportForm button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Time inputs container */
+.time-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.time-container input {
+    margin-bottom: 0 !important;
+}
+
+.time-container span {
+    margin: 0 10px;
+    color: #666;
+}
+
+/* Make the form responsive */
+@media (max-width: 768px) {
+    #reportForm {
+        padding: 20px;
+    }
+    
+    #reportForm input[type="date"],
+    #reportForm input[type="time"] {
+        width: 100%;
+    }
+}
+
+/* USER SETTINGS */
+/* Account Settings Styles */
+.settings-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.settings-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    padding: 25px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.settings-section h2 {
+    color: #444;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    border-left: 4px solid #6a11cb;
+    padding-left: 12px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 16px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    accent-color: #6a11cb;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.btn-update {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(106, 17, 203, 0.2);
+}
+
+.btn-update:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.3);
+}
+
+.btn-update:active {
+    transform: translateY(0);
+}
+
+.danger-zone {
+    border: 1px solid #ffdddd;
+    background-color: #fff8f8;
+}
+
+.danger-zone h2 {
+    border-left: 4px solid #ff3b30;
+    color: #d32f2f;
+}
+
+.danger-zone p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.btn-danger {
+    background: #ff3b30;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(255, 59, 48, 0.2);
+}
+
+.btn-danger:hover {
+    background: #e53935;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 59, 48, 0.3);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+.back-link {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.back-link a {
+    color: #6a11cb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.back-link a:hover {
+    color: #2575fc;
+    text-decoration: underline;
+}
+
+.flash-message {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.warning {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border-left: 4px solid #f57f17;
+}
+
+.info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-left: 4px solid #1565c0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 0 15px;
+    }
+    
+    .settings-section {
+        padding: 20px;
+    }
+    
+    .btn-update, .btn-danger {
+        width: 100%;
+    }
+}

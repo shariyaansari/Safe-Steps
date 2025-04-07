@@ -5,36 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
     <style>
         #map {
             height: 500px;
             width: 100%;
         }
-        .content {
-            padding: 20px;
-        }
-        .news-analysis-container {
-            margin-top: 20px;
-        }
-        .chart-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .chart-card {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 15px;
-        }
     </style>
 </head>
 <body>
+    
+      
     <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+              </svg>
+            </div>
+            SafeSteps
+          </div>
         <ul>
             <li><a href="{{ url_for('home.home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
@@ -45,6 +35,10 @@
     </nav>
 
     <h1>Admin Dashboard</h1>
+    <div class="welcome-banner">
+        <h3>Welcome to SafeSteps Admin Dashboard</h3>
+        <p>Monitor safety zones, analyze reports, and manage user data from this central hub.</p>
+    </div>
     <div class="content">
         <h2>View Safety Map</h2>
         <p>Check the safety zones and crime heatmap in your area.</p>
@@ -61,5 +55,8 @@
 
     <!-- Include your custom JavaScript file -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <footer>
+        <p>&copy; 2025 SafeSteps. All rights reserved.</p>
+    </footer>
 </body>
 </html>
