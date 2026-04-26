@@ -141,10 +141,7 @@ app.register_blueprint(news_analysis_bp)
 with app.app_context():
     create_admin_if_not_exists()
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 # Initialize DB
 def init_db():
     conn = sqlite3.connect('reports.db')
@@ -194,7 +191,6 @@ def get_reports():
     
     return jsonify(report_list)
 
-<<<<<<< HEAD
 @app.route('/debug/routes')
 def list_routes():
     output = []
@@ -205,12 +201,6 @@ def list_routes():
             'route': str(rule)
         })
     return {'routes': sorted(output, key=lambda x: x['endpoint'])}
-
-
-
-
-=======
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 
 if __name__ == '__main__':
     app.run(debug=True)
