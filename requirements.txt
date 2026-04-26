@@ -1,0 +1,40 @@
+# Web Framework & Server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database & ORM
+SQLAlchemy
+asyncpg
+GeoAlchemy2
+alembic
+psycopg2-binary
+
+# Caching & Message Broker
+redis
+websockets
+
+# Background Tasks & Scheduling
+celery
+APScheduler
+
+# Machine Learning & Data
+scikit-learn
+xgboost
+pandas
+numpy
+
+# Web Scraping
+beautifulsoup4
+playwright
+requests
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+
+# Configuration & Utilities
+python-dotenv
+pydantic
+pydantic-settings

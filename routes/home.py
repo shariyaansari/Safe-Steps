@@ -1,13 +1,10 @@
-from flask import Blueprint, redirect, url_for
-from flask_login import login_required, current_user
+from fastapi import APIRouter, Depends
+from fastapi.responses import RedirectResponse
+from core.dependencies import get_current_active_user
+from models import Users
 
-home_bp = Blueprint("home", __name__)
+router = APIRouter()
 
-@home_bp.route("/")
-# @login_required
-def home():
-    if current_user.role == "admin":
-        return redirect(url_for("admin.dashboard"))  # Ensure this route exists
-    else:
-        return redirect(url_for("parent.dashboard"))  # Ensure this route exists
-
+@router.get("/")
+async def home(current_user: Users = Depends(get_current_active_user)):
+    return RedirectResponse(url=f"/{current_user.role}/dashboard")

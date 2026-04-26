@@ -1,19 +1,20 @@
-from flask import Blueprint, render_template, jsonify
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 import os
 import json
 import pandas as pd
 import numpy as np
 import logging
-import datetime
+from datetime import datetime
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-news_analysis_bp = Blueprint('news_analysis', __name__)
+router = APIRouter()
 
-@news_analysis_bp.route('/api/safety-data')
-def get_safety_data():
+@router.get('/api/safety-data')
+async def get_safety_data():
     """API endpoint to get safety data in GeoJSON format for the map"""
     try:
         # First, check if we have pre-generated map data
@@ -58,7 +59,7 @@ def get_safety_data():
             # Log the number of features for debugging
             logger.info(f"Returning {len(features)} features from pre-generated map data")
             
-            return jsonify(geojson)
+            return geojson
         
         # If no pre-generated data, fall back to the original method
         # Define locations in Kurla with their coordinates
@@ -230,7 +231,7 @@ def get_safety_data():
             
         logger.info(f"Regenerated map data file with {len(markers)} markers")
         
-        return jsonify(geojson)
+        return geojson
     except Exception as e:
         logger.error(f"Error generating safety data: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(status_code=500, content={"error": str(e)})
