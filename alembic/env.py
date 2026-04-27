@@ -20,8 +20,10 @@ import os
 import sys
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
-from core.database import Base
+from core.database import Base, DATABASE_URL
 import models
+
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 target_metadata = Base.metadata
 
@@ -58,7 +60,7 @@ def run_migrations_offline() -> None:
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table" and name in {
         "spatial_ref_sys", "topology", "layer", "edges", "faces",
-        "node", "street_type_lookup", "zip_lookup", "zip_lookup_base",
+        "node", "street_type_lookup", "zip_lookup", "zip_lookup_base", "zip_lookup_all",
         "zip_state", "zip_state_loc", "place_lookup", "county_lookup",
         "countysub_lookup", "direction_lookup", "secondary_unit_lookup",
         "state_lookup", "geocode_settings", "geocode_settings_default",

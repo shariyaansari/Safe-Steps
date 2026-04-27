@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
 from core.database import Base
@@ -14,6 +14,8 @@ class Users(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     incidents = relationship("Incident", back_populates="user")
+    votes = relationship("IncidentVote", back_populates="user")
+    otps = relationship("OTP", back_populates="user")
 
 class Incident(Base):
     __tablename__ = "incidents"
@@ -34,3 +36,28 @@ class Incident(Base):
     status = Column(String(50), default="reported")
     
     user = relationship("Users", back_populates="incidents")
+    votes = relationship("IncidentVote", back_populates="incident")
+
+class IncidentVote(Base):
+    __tablename__ = "incident_votes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    incident_id = Column(Integer, ForeignKey('incidents.id'), nullable=False)
+    vote = Column(Integer, nullable=False) # 1 for upvote, -1 for downvote
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("Users", back_populates="votes")
+    incident = relationship("Incident", back_populates="votes")
+
+class OTP(Base):
+    __tablename__ = "otps"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    code = Column(String(10), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    is_used = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("Users", back_populates="otps")

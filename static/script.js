@@ -115,9 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //     { lat: 19.0857, lng: 72.8907 }
     // ];
 
-<<<<<<< HEAD
-    var gridSize = 0.005; // Defines grid cell size
-=======
+    function locateUser() {
         navigator.geolocation.getCurrentPosition(function (position) {
             var userLat = position.coords.latitude;
             var userLng = position.coords.longitude;
@@ -158,7 +156,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var gridSize = 0.005;
     var gridLayers = [];
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
 
     function getColor(count) {
         if (count >= 7) return 'red';
@@ -215,60 +212,109 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function drawGrid(reports) {
+        // Clear previous grid layers
+        gridLayers.forEach(layer => map.removeLayer(layer));
+        gridLayers = [];
+        
         var groupedReports = groupReportsByGrid(reports);
-<<<<<<< HEAD
-        console.log("Grouped Reports:", groupedReports);
-    
-        for (var lat = 19.040; lat < 19.100; lat += gridSize) {
-            for (var lng = 72.860; lng < 72.920; lng += gridSize) {
-=======
         for (var lat = 19.0300; lat < 19.1100; lat += gridSize) {
             for (var lng = 72.8500; lng < 72.9300; lng += gridSize) {
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
                 var gridKey = lat.toFixed(3) + "," + lng.toFixed(3);
                 var reportCount = groupedReports[gridKey] || 0;
                 var color = getColor(reportCount);
     
-                var rectangle = L.rectangle([
-                    [lat, lng],
-                    [lat + gridSize, lng + gridSize]
-                ], {
-                    color: 'black',
-                    weight: 0.2,
-                    fillColor: color,
-                    fillOpacity: 0.6,
-                    crimeCount: reportCount  // Set crime count in options
-                }).addTo(map);
-    
-                rectangle.on({
-                    mouseover: highlightFeature,
-                    mouseout: resetHighlight,
-                    click: zoomToFeature
-                });
-<<<<<<< HEAD
-=======
-    
-                gridLayers.push(rectangle);
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
+                if (reportCount > 0) {
+                    var rectangle = L.rectangle([
+                        [lat, lng],
+                        [lat + gridSize, lng + gridSize]
+                    ], {
+                        color: 'black',
+                        weight: 0.2,
+                        fillColor: color,
+                        fillOpacity: 0.4,
+                        crimeCount: reportCount
+                    }).addTo(map);
+        
+                    rectangle.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight,
+                        click: zoomToFeature
+                    });
+        
+                    gridLayers.push(rectangle);
+                }
             }
         }
+        
+        // Draw individual markers with upvote buttons
+        reports.forEach(report => {
+            let markerColor = 'blue';
+            if (report.status === "verified" || report.status === "community_verified") markerColor = 'green';
+            if (report.status === "rejected") markerColor = 'red';
+            
+            const marker = L.circleMarker([report.lat, report.lng], {
+                radius: 6,
+                fillColor: markerColor,
+                color: '#fff',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.9
+            }).addTo(map);
+            
+            const popupContent = `
+                <div style="font-size: 14px;">
+                    <strong>${report.type}</strong><br>
+                    <span style="font-size: 12px; color: gray;">${report.status}</span><br>
+                    <p style="margin: 5px 0;">${report.description}</p>
+                    <button onclick="upvoteIncident(${report.id})" style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                        👍 Upvote
+                    </button>
+                </div>
+            `;
+            marker.bindPopup(popupContent);
+            gridLayers.push(marker); // Keep track to clear later
+        });
     }
 
-    fetch('/get_reports')
+    // Expose upvote function globally so the popup button can call it
+    window.upvoteIncident = function(incidentId) {
+        fetch(`/parent/incident/${incidentId}/vote`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert("Vote recorded! Total votes: " + data.total_votes);
+            }
+        })
+        .catch(err => console.error(err));
+    };
+
+    fetch('/parent/get_reports')
     .then(response => response.json())
     .then(data => {
-        // Sort reports by timestamp in descending order (most recent first)
-        data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        displayReports(data); // Function to display reports on the admin page
-    })
-    .catch(error => console.error("Error fetching reports:", error));
-
-
-    fetch('/get_reports')
-    .then(response => response.json())
-    .then(data => {
-        drawGrid(data); // Pass fetched reports
+        if(typeof displayReports === "function") {
+            data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            displayReports(data);
+        }
+        drawGrid(data);
+        
+        // Connect to WebSocket
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/incidents`;
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onmessage = function(event) {
+            const report = JSON.parse(event.data);
+            console.log("Real-time report received via WS:", report);
+            data.push(report);
+            drawGrid(data); // Redraw the grid with the new report
+        };
     })
     .catch(error => console.error("Error fetching reports:", error));
 
@@ -335,7 +381,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add event listener to the live location button
     document.getElementById('liveLocationBtn').addEventListener('click', showLiveLocation);
 
-<<<<<<< HEAD
     // News Analysis Layer functionality
     // Initialize news data layer as null
     let newsDataLayer = null;
@@ -506,12 +551,4 @@ document.addEventListener("DOMContentLoaded", function () {
     // Export map object for potential use in other scripts
     window.safeStepsMap = map;
 });
-=======
-    fetch('/get_reports')
-        .then(response => response.json())
-        .then(data => drawGrid(data))
-        .catch(error => console.error("Error fetching reports:", error));
 
-    drawGrid();
-});
->>>>>>> f726eaa0fefda636a1935d9fb8fa00cceffaf0ba
