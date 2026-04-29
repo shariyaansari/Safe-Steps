@@ -18,13 +18,18 @@ if config.config_file_name is not None:
 
 import os
 import sys
+# Telling Python to look in the parent directory for modules to import, so that we can import our database models and Base.
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
+
+# Import db + models 
 from core.database import Base, DATABASE_URL
 import models
 
+# Overrides .ini DB URL with your app’s DB URL, so that Alembic uses the same database as your app.
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
+# To compare db, alembic compares against db metadata
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -33,6 +38,7 @@ target_metadata = Base.metadata
 # ... etc.
 
 
+# No db connection is made here, by default. Just generates SQL scripts, could be used for ci/cd pipelines, or for manual review before applying to the database.
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -57,6 +63,7 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+# This function tells Alembic to ignore certain tables when comparing the database schema to the models. This is useful for tables that are managed outside of Alembic, such as lookup tables or spatial reference system tables.
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table" and name in {
         "spatial_ref_sys", "topology", "layer", "edges", "faces",
@@ -98,7 +105,8 @@ def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     asyncio.run(run_async_migrations())
 
-
+# Offline → generate SQL
+# Online → apply migrations directly to the database
 if context.is_offline_mode():
     run_migrations_offline()
 else:

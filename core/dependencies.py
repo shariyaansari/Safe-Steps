@@ -7,6 +7,7 @@ from core.security import SECRET_KEY, ALGORITHM
 from models import Users
 
 async def get_current_user(request: Request, db: AsyncSession = Depends(get_db)):
+    # Define credential exception to be raised if Auth fails
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Please Login to Continue",
@@ -36,6 +37,7 @@ async def get_current_user(request: Request, db: AsyncSession = Depends(get_db))
     user = result.scalars().first()
     if user is None:
         raise credentials_exception
+    print(f"Authenticated user: {user.username} with role: {user.role}")
     return user
 
 async def get_current_active_user(current_user: Users = Depends(get_current_user)):
@@ -47,4 +49,5 @@ async def get_current_admin(current_user: Users = Depends(get_current_active_use
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The user doesn't have enough permission to access this page"
         )
+    print(f"Admin access granted for user: {current_user.username}")
     return current_user

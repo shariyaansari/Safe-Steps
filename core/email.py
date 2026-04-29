@@ -1,3 +1,4 @@
+# For sending OTP emails to users. In development, it prints the OTP to the console instead of sending an email, so you can test the flow without needing a real email account or SMTP server. In production, it uses SMTP credentials from environment variables to send real emails. If SMTP credentials are not set, it will warn and only print the OTP to the console.
 import os
 import smtplib
 from email.mime.text import MIMEText
