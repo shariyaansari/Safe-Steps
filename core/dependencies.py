@@ -4,7 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from core.database import get_db
 from core.security import SECRET_KEY, ALGORITHM
-from models import Users
+from models import User,UserRole
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def get_current_user(request: Request, db: AsyncSession = Depends(get_db)):
     # Define credential exception to be raised if Auth fails
@@ -33,18 +36,25 @@ async def get_current_user(request: Request, db: AsyncSession = Depends(get_db))
     except JWTError:
         raise credentials_exception
         
-    result = await db.execute(select(Users).filter(Users.username == username))
+    result = await db.execute(select(User).filter(User.username == username))
     user = result.scalars().first()
     if user is None:
         raise credentials_exception
-    print(f"Authenticated user: {user.username} with role: {user.role}")
+    logger.debug(f"Authenticated user: {user.username}")
+    # print(f"Authenticated user: {user.username} with role: {user.role}")
     return user
 
-async def get_current_active_user(current_user: Users = Depends(get_current_user)):
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    logger.debug(f"Checking if user is active: {current_user.username}")
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is deactivated"
+        )
     return current_user
 
-async def get_current_admin(current_user: Users = Depends(get_current_active_user)):
-    if current_user.role != "admin":
+async def get_current_admin(current_user: User = Depends(get_current_active_user)):
+    if current_user.role != UserRole.admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The user doesn't have enough permission to access this page"

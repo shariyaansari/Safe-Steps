@@ -2,22 +2,38 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 
 load_dotenv()
-try:    
-    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/safesteps")
-    print(f"Database connection successful. Using DATABASE_URL: {DATABASE_URL}")
-except Exception as e:
-    print(f"[ERROR] Failed to load DATABASE_URL: {e}")
 
-# create_engine -> blocks the event loop, slower under load, Not ideal for modern APIs 
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set in environment variables")
+
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=os.getenv("DEBUG", "false").lower() == "true"
+)
+
+# create_engine -> blocks the event loop, slower under load, Not ideal for modern APIs
 # Therefore, we use create_async_engine, which is non-blocking and allows for better performance in async applications.
-engine = create_async_engine(DATABASE_URL, echo=False)
+# echo = true only in dev 
 
-# a session that is conversation with the database, used to run queries, manage transactions, and interact with the database in an async context. expire_on_commit=False means that after a commit, the session won't automatically expire all instances, allowing you to continue using them without needing to refresh from the database. lazy loading avoided 
-AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-Base = declarative_base()
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=os.getenv("DEBUG", "false").lower() == "true"
+)
+
+# a session that is conversation with the database, used to run queries, manage transactions, and interact with the database in an async context. expire_on_commit=False means that after a commit, the session won't automatically expire all instances, allowing you to continue using them without needing to refresh from the database. lazy loading avoided
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+class Base(DeclarativeBase):
+    pass
 
 
 # THis is dependency injection function, used in FASTAPI routes to get a database session. It creates a new session for each request and ensures that the session is properly closed after the request is completed, preventing connection leaks and ensuring efficient resource management.

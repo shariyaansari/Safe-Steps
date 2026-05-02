@@ -1,13 +1,8 @@
 # This file contains utility functions for password hashing, verification, and JWT token creation. It uses the passlib library for secure password hashing and the jose library for JWT token management. The functions in this file are used throughout the application to handle authentication and authorization tasks, such as verifying user credentials and generating access tokens for authenticated users.
-import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
-from jose import jwt, JWTError
+from jose import jwt
 from passlib.context import CryptContext
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "process.env.JWT_SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM", "process.env.ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "process.env.ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -20,12 +15,13 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 # Create a JWT access token with the provided data and expiration time. This function is used to generate a token for authenticated users, which can be used for subsequent requests to access protected routes. The token includes an expiration time to enhance security by limiting the token's validity period.
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(
+    data: dict,
+    secret_key: str,
+    algorithm: str,
+    expires_delta: Optional[timedelta] = None
+) -> str:
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, secret_key, algorithm=algorithm)
