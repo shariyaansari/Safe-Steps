@@ -8,6 +8,8 @@ from core.config import settings
 
 from routers import auth, user, reports, admin, analytics
 from ws.events import router as ws_router
+from ws.events import redis_subscriber
+
 
 
 # ─────────────────────────────────────────────
@@ -15,11 +17,14 @@ from ws.events import router as ws_router
 # creates all DB tables if they don't exist
 # ─────────────────────────────────────────────
 
+# redis_subscriber() - long running async function that subscribes to the Redis channel and waits for messages. When it gets one, it calls manager.broadcast().
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     print("[SafeSteps] Database tables ready")
+    asyncio.create_task(redis_subscriber())   # ← add this line
     yield
     await engine.dispose()
     print("[SafeSteps] Database connection closed")

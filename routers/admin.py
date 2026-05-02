@@ -8,6 +8,7 @@ from typing import Optional
 from core.database import get_db
 from core.dependencies import get_current_active_user, require_admin
 from models import User, Incident, IncidentStatus, AuditLog, AuditAction, UserRole
+from ws.events import publish_incident
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 templates = Jinja2Templates(directory="templates")
@@ -119,6 +120,7 @@ async def verify_incident(
     )
     db.add(log)
     await db.commit()
+    await publish_incident(incident)
 
     return {"message": "Incident verified", "incident_id": incident_id}
 
