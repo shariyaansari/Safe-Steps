@@ -1,61 +1,81 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse, JSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
-# Import routers
-from routes.auth import router as auth_router
-from routes.home import router as home_router
-from routes.admin import router as admin_router
-from routes.parent import router as parent_router
-from routes.news_analysis import router as news_analysis_router
-from core.websockets import router as websocket_router
+from core.database import engine, Base
+from core.config import settings
 
-app = FastAPI(title="Safe-Steps API")
+from routers import auth, user, reports, admin, analytics
+from ws.events import router as ws_router
 
-# Setup CORS
+
+# ─────────────────────────────────────────────
+# Lifespan — runs on startup and shutdown
+# creates all DB tables if they don't exist
+# ─────────────────────────────────────────────
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("[SafeSteps] Database tables ready")
+    yield
+    await engine.dispose()
+    print("[SafeSteps] Database connection closed")
+
+
+# ─────────────────────────────────────────────
+# App instance
+# ─────────────────────────────────────────────
+
+app = FastAPI(
+    title=settings.app_name,
+    debug=settings.debug,
+    lifespan=lifespan
+)
+
+
+# ─────────────────────────────────────────────
+# CORS
+# Allows your HTML frontend (served from the
+# same origin) to make fetch/XHR requests
+# ─────────────────────────────────────────────
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"] if settings.debug else ["http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static files
+
+# ─────────────────────────────────────────────
+# Static files
+# ─────────────────────────────────────────────
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.exception_handler(StarletteHTTPException)
-async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-    if exc.status_code == 401:
-        # Redirect unauthorized users to the login page
-        return RedirectResponse(url="/auth/login")
-    elif exc.status_code == 403:
-        # Redirect forbidden users to the login page
-        return RedirectResponse(url="/auth/login")
-    
-    # Check if request accepts html
-    accept = request.headers.get("accept", "")
-    if "text/html" in accept:
-        templates = Jinja2Templates(directory="templates")
-        # In a real app we might render an error template here
-        return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
-        
-    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
 
-# Include routers
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(home_router, prefix="/home", tags=["home"])
-app.include_router(admin_router, prefix="/admin", tags=["admin"])
-app.include_router(parent_router, prefix="/parent", tags=["parent"])
-app.include_router(news_analysis_router, tags=["news"])
-app.include_router(websocket_router, tags=["websocket"])
+# ─────────────────────────────────────────────
+# Routers
+# ─────────────────────────────────────────────
+
+app.include_router(auth.router)
+app.include_router(user.router)
+app.include_router(reports.router)
+app.include_router(admin.router)
+app.include_router(analytics.router)
+app.include_router(ws_router)
+
+
+# ─────────────────────────────────────────────
+# Root redirect
+# ─────────────────────────────────────────────
+
+from fastapi.responses import RedirectResponse
 
 @app.get("/")
 async def root():
-    # Redirect to home or auth
-    return RedirectResponse(url="/home/")
-
-# To run: uvicorn app:app --reload
+    return RedirectResponse(url="/auth/login")

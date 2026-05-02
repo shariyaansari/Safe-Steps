@@ -38,3 +38,4 @@ bcrypt
 python-dotenv
 pydantic
 pydantic-settings
+cloudinary
