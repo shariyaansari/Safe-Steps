@@ -17,11 +17,11 @@ templates = Jinja2Templates(directory="templates")
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-@router.get("/register", response_class=HTMLResponse)
+@router.get("/register", response_class=HTMLResponse, name="auth.register")
 async def register_get(request: Request):
     return templates.TemplateResponse(request, "sign_up.html", {"request": request})
 
-@router.post("/register")
+@router.post("/register", name="auth.register_post")
 async def register_post(
     request: Request,
     username: str = Form(...),
@@ -59,11 +59,11 @@ async def register_post(
     response.set_cookie(key="temp_auth", value=f"Bearer {temp_token}", httponly=True)
     return response
 
-@router.get("/login", response_class=HTMLResponse)
+@router.get("/login", response_class=HTMLResponse,name="auth.login")
 async def login_get(request: Request):
     return templates.TemplateResponse(request, "login.html", {"request": request})
 
-@router.post("/login")
+@router.post("/login", name = "auth.login_post")
 async def login_post(
     request: Request,
     username: str = Form(...),

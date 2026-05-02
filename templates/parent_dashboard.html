@@ -4,35 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Dashboard</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- App CSS -->
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+
+    <style>
+        .dashboard-container {
+            padding: 20px;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <nav class="navbar">
-        <ul>
-            <li><a href="{{ url_for('parent.dashboard') }}" >Home </a></li>
-            <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
-            <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
-            <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
-            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
-        </ul>
-    </nav>
-    
+<nav class="navbar">
+    <ul>
+        <li><a href="{{ url_for('parent.dashboard') }}" class="active">Home</a></li>
+        <li><a href="{{ url_for('parent.report_incident') }}">Report Incident</a></li>
+        <li><a href="{{ url_for('parent.analytics') }}">Analytics</a></li>
+        <li><a href="{{ url_for('parent.user_settings') }}">User Settings</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="dashboard-container">
 
     <h1>Parent Dashboard</h1>
-    
-    <div class="content">
-        <h2>View Safety Map</h2>
-        <p>Check the safety zones and crime heatmap in your area.</p>
-        <div id="map"></div>
-    </div>
 
-    <!-- Include Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <h2>View Safety Map</h2>
+    <p>Check the safety zones and crime heatmap in your area.</p>
 
-    <!-- Include your custom JavaScript file -->
-    <script src="{{ url_for('static', path='script.js') }}"></script>
+    <div id="map"></div>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Optional: backend data (future-ready) -->
+{# 
+<script>
+    const incidents = {{ incidents | tojson }};
+</script>
+#}
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', path='script.js') }}"></script>
 
 </body>
 </html>

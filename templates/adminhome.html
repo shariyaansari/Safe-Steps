@@ -4,25 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- App Styles -->
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+
     <style>
         #map {
             height: 500px;
             width: 100%;
         }
-        .content {
+
+        .dashboard-container {
             padding: 20px;
         }
-        .news-analysis-container {
-            margin-top: 20px;
-        }
+
         .chart-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             margin-top: 20px;
         }
+
         .chart-card {
             flex: 1;
             min-width: 300px;
@@ -33,33 +38,38 @@
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar">
-        <ul>
-            <li><a href="{{ url_for('home.home') }}">Home</a></li>
-            <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
-            <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
-            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
-            <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
-        </ul>
-    </nav>
+
+<nav class="navbar">
+    <ul>
+        <li><a href="{{ url_for('home.home') }}">Home</a></li>
+        <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin.analytics') }}">Analytics</a></li>
+        <li><a href="{{ url_for('admin.users') }}">Users</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="logout">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="dashboard-container">
 
     <h1>Admin Dashboard</h1>
-    <div class="content">
-        <h2>View Safety Map</h2>
-        <p>Check the safety zones and crime heatmap in your area.</p>
-        <div id="map"></div>
-    </div>
 
-    <!-- Include Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Include Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <h2>View Safety Map</h2>
+    <p>Check the safety zones and crime heatmap in your area.</p>
 
-    
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <div id="map"></div>
 
-    <!-- Include your custom JavaScript file -->
-    <script src="{{ url_for('static', path='script.js') }}"></script>
+</div>
+
+<!-- Leaflet JS (ONLY ONCE) -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Chart.js (optional, keep only if used in script.js) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Your custom JS -->
+<script src="{{ url_for('static', path='script.js') }}"></script>
+
 </body>
 </html>

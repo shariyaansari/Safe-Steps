@@ -1,44 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
-  </head>
-  <body>
-    
-    <h1>Create an Account</h1>
-    <form action="{{ url_for('auth.register') }}" method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" required />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
 
-      <label for="email">Email:</label>
-      <input type="email" name="email" required />
+  <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
 
-      <label for="password">Password:</label>
-      <input type="password" name="password" required />
+<body>
 
-      <label for="role">Role:</label>
-      <select name="role">
-        <option value="parent">Parent</option>
-        <option value="authorities">Authorities</option>
-      </select>
+<h1>Create an Account</h1>
 
-      <button type="submit">Register</button>
+<form action="{{ url_for('auth.register_post') }}" method="post">
 
-      <!-- Sign-in link below the Register button -->
-      <p class="signin-text">
-        Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>
-      </p>
-      {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-          {% for category, message in messages %}
-          <p class="flash-message {{ category }}" style="text-align: center;">{{ message }}</p>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-    </form>
-  </body>
+  <label>Username:</label>
+  <input type="text" name="username" required>
+
+  <label>Email:</label>
+  <input type="email" name="email" required>
+
+  <label>Password:</label>
+  <input type="password" name="password" required>
+
+  <label>Role:</label>
+  <select name="role">
+    <option value="parent">Parent</option>
+    <option value="authorities">Authorities</option>
+  </select>
+
+  <button type="submit">Register</button>
+
+  <p class="signin-text">
+    Already have an account?
+    <a href="{{ url_for('auth.login') }}">Sign in</a>
+  </p>
+
+  {% if error %}
+    <p style="text-align:center; color:red;">
+      {{ error }}
+    </p>
+  {% endif %}
+
+  {% if message %}
+    <p style="text-align:center; color:green;">
+      {{ message }}
+    </p>
+  {% endif %}
+
+</form>
+
+</body>
 </html>
