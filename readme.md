@@ -3,7 +3,6 @@
 **A real-time community crime mapping platform for Mumbai** — empowering residents to report incidents, visualize crime patterns geospatially, and stay ahead of danger through ML-based predictions.
 
 ---
-
 ## 📌 Overview
 
 Safe Steps is a civic safety platform where users report crime incidents that appear live on a map. Admins verify and moderate reports, while a machine learning layer predicts high-risk zones based on historical and scraped data. Built with parents, commuters, and local communities in mind — particularly for high-density urban areas like Kurla, BKC, and surrounding Mumbai wards.
