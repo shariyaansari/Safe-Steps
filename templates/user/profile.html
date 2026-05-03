@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Profile — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page page--sidebar">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__section">
+      <div class="sidebar__label">Navigation</div>
+      <a href="/user/map"          class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        Live map
+      </a>
+      <a href="/user/dashboard"    class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        Dashboard
+      </a>
+      <a href="/reports/submit"    class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Report incident
+      </a>
+      <a href="/user/my-incidents" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        My reports
+      </a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__label">Account</div>
+      <a href="/user/profile"  class="sidebar__link active">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        Profile
+      </a>
+      <a href="/auth/logout"   class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" style="max-width: 720px;">
+
+    <div class="page-header">
+      <div class="page-header__eyebrow">Account</div>
+      <div class="page-header__title">Profile</div>
+      <div class="page-header__sub">Manage your account details</div>
+    </div>
+
+    <!-- Account info card -->
+    <div class="card mb-2">
+      <div class="card__title">Account info</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px;">
+        <div>
+          <div class="form-label">Username</div>
+          <div class="mono" style="font-size:0.95rem;color:var(--text-primary);">
+            {{ user.username }}
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Cannot be changed</div>
+        </div>
+        <div>
+          <div class="form-label">Role</div>
+          <span class="role-badge role-badge--{{ user.role.value }}">{{ user.role.value }}</span>
+        </div>
+        <div>
+          <div class="form-label">Member since</div>
+          <div style="font-size:0.875rem;color:var(--text-secondary);">
+            {{ user.created_at.strftime('%d %B %Y') }}
+          </div>
+        </div>
+        <div>
+          <div class="form-label">Last login</div>
+          <div style="font-size:0.875rem;color:var(--text-secondary);">
+            {% if user.last_login %}
+              {{ user.last_login.strftime('%d %b %Y, %H:%M') }}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update email -->
+    <div class="card mb-2">
+      <div class="card__title">Email address</div>
+
+      {% if error and 'email' in error.lower() %}
+        <div class="alert alert--error">{{ error }}</div>
+      {% endif %}
+      {% if success and 'profile' in success.lower() %}
+        <div class="alert alert--success">{{ success }}</div>
+      {% endif %}
+
+      <form method="POST" action="/user/profile">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            class="form-input"
+            type="email"
+            name="email"
+            id="email"
+            value="{{ user.email }}"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn--primary">Save email</button>
+      </form>
+    </div>
+
+    <!-- Change password -->
+    <div class="card">
+      <div class="card__title">Change password</div>
+
+      {% if error and 'password' in error.lower() %}
+        <div class="alert alert--error">{{ error }}</div>
+      {% endif %}
+      {% if success and 'password' in success.lower() %}
+        <div class="alert alert--success">{{ success }}</div>
+      {% endif %}
+
+      <form method="POST" action="/user/change-password" id="pw-form">
+        <div class="form-group">
+          <label class="form-label" for="current_password">Current password</label>
+          <input
+            class="form-input"
+            type="password"
+            name="current_password"
+            id="current_password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="new_password">New password</label>
+          <input
+            class="form-input"
+            type="password"
+            name="new_password"
+            id="new_password"
+            placeholder="min. 8 characters"
+            required
+            minlength="8"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirm_password">Confirm new password</label>
+          <input
+            class="form-input"
+            type="password"
+            name="confirm_password"
+            id="confirm_password"
+            placeholder="••••••••"
+            required
+          />
+          <div id="pw-match-hint" style="font-family:var(--font-mono);font-size:0.65rem;margin-top:4px;"></div>
+        </div>
+
+        <button type="submit" class="btn btn--primary" id="pw-submit">Update password</button>
+      </form>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Live password match indicator
+  const newPw     = document.getElementById('new_password');
+  const confirmPw = document.getElementById('confirm_password');
+  const hint      = document.getElementById('pw-match-hint');
+
+  function checkMatch() {
+    if (!confirmPw.value) { hint.textContent = ''; return; }
+    if (newPw.value === confirmPw.value) {
+      hint.textContent  = '✓ Passwords match';
+      hint.style.color  = 'var(--accent-green)';
+    } else {
+      hint.textContent  = '✗ Passwords do not match';
+      hint.style.color  = 'var(--accent-red)';
+    }
+  }
+
+  newPw.addEventListener('input',     checkMatch);
+  confirmPw.addEventListener('input', checkMatch);
+
+  // prevent submit if passwords don't match
+  document.getElementById('pw-form').addEventListener('submit', (e) => {
+    if (newPw.value !== confirmPw.value) {
+      e.preventDefault();
+      showToast('Passwords do not match', 'error');
+    }
+  });
+</script>
+{% endblock %}
