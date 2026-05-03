@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page page--sidebar">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__section">
+      <div class="sidebar__label">Admin panel</div>
+      <a href="/admin/dashboard"  class="sidebar__link active">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        Dashboard
+      </a>
+      <a href="/admin/incidents"  class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Reports queue
+      </a>
+      <a href="/admin/users"      class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Users
+      </a>
+      <a href="/admin/audit-log"  class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Audit log
+      </a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__label">Quick links</div>
+      <a href="/user/map" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        Live map
+      </a>
+      <a href="/auth/logout" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-header__eyebrow">Admin</div>
+      <div class="page-header__title">Dashboard</div>
+      <div class="page-header__sub">Welcome back, {{ user.username }} — <span class="text-accent">{{ stats.pending }}</span> reports pending review</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card stat-card--blue">
+        <div class="stat-card__label">Total reports</div>
+        <div class="stat-card__value">{{ stats.total }}</div>
+      </div>
+      <div class="stat-card stat-card--amber">
+        <div class="stat-card__label">Pending</div>
+        <div class="stat-card__value">{{ stats.pending }}</div>
+      </div>
+      <div class="stat-card stat-card--green">
+        <div class="stat-card__label">Verified</div>
+        <div class="stat-card__value">{{ stats.verified }}</div>
+      </div>
+      <div class="stat-card stat-card--red">
+        <div class="stat-card__label">Rejected</div>
+        <div class="stat-card__value">{{ stats.rejected }}</div>
+      </div>
+    </div>
+
+    <!-- Pending queue -->
+    <div class="card">
+      <div class="flex justify-between flex-center mb-2">
+        <div class="card__title">Pending moderation queue</div>
+        <a href="/admin/incidents" class="btn btn--ghost btn--sm">View all reports</a>
+      </div>
+
+      {% if pending_incidents %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Area</th>
+              <th>Description</th>
+              <th>Occurred</th>
+              <th>Upvotes</th>
+              <th>Photo</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody">
+            {% for inc in pending_incidents %}
+            <tr id="row-{{ inc.id }}">
+              <td>
+                <span class="badge badge--{{ inc.incident_type.value }}">{{ inc.incident_type.value }}</span>
+              </td>
+              <td class="mono" style="font-size:0.78rem;">{{ inc.area }}</td>
+              <td style="max-width:220px;">
+                {% if inc.description %}
+                  <span style="font-size:0.8rem;color:var(--text-secondary);
+                               display:-webkit-box;-webkit-line-clamp:2;
+                               -webkit-box-orient:vertical;overflow:hidden;">
+                    {{ inc.description }}
+                  </span>
+                {% else %}
+                  <span class="text-muted" style="font-size:0.75rem;">No description</span>
+                {% endif %}
+              </td>
+              <td style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;">
+                {{ inc.occurred_at.strftime('%d %b %Y') }}<br>
+                <span style="font-size:0.7rem;">{{ inc.occurred_at.strftime('%H:%M') }}</span>
+              </td>
+              <td class="mono" style="font-size:0.8rem;text-align:center;">
+                {{ inc.upvotes }}
+              </td>
+              <td>
+                {% if inc.image_url %}
+                  <a href="{{ inc.image_url }}" target="_blank" class="btn btn--ghost btn--sm">View</a>
+                {% else %}
+                  <span class="text-muted" style="font-size:0.72rem;">None</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="flex gap-1">
+                  <button
+                    class="btn btn--success btn--sm"
+                    onclick="verifyIncident('{{ inc.id }}')"
+                  >✓ Verify</button>
+                  <button
+                    class="btn btn--danger btn--sm"
+                    onclick="openRejectModal('{{ inc.id }}')"
+                  >✗ Reject</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="text-align:center;padding:48px 32px;color:var(--text-muted);">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;margin-bottom:8px;">
+          ALL CLEAR
+        </div>
+        <div style="font-size:0.875rem;">No reports pending review</div>
+      </div>
+      {% endif %}
+    </div>
+
+  </main>
+</div>
+
+<!-- Reject modal -->
+<div id="reject-modal" style="
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);z-index:900;
+  align-items:center;justify-content:center;
+">
+  <div class="card" style="max-width:420px;width:90%;">
+    <div style="font-family:var(--font-mono);font-size:1rem;font-weight:600;margin-bottom:8px;">
+      Reject report
+    </div>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:16px;">
+      Optionally leave a reason for rejection.
+    </p>
+    <div class="form-group">
+      <label class="form-label" for="reject-note">Reason <span class="text-muted">(optional)</span></label>
+      <textarea
+        class="form-textarea"
+        id="reject-note"
+        placeholder="e.g. Duplicate report, insufficient information..."
+        rows="3"
+      ></textarea>
+    </div>
+    <div class="flex gap-1" style="justify-content:flex-end;">
+      <button class="btn btn--ghost" onclick="closeRejectModal()">Cancel</button>
+      <button class="btn btn--danger" id="confirm-reject-btn">Reject report</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let rejectTargetId = null;
+
+// ── Verify ─────────────────────────────────────────
+async function verifyIncident(incidentId) {
+  const btn = document.querySelector(`#row-${incidentId} .btn--success`);
+  if (btn) { btn.textContent = '...'; btn.disabled = true; }
+
+  try {
+    const res  = await fetch(`/admin/incidents/${incidentId}/verify`, { method: 'POST' });
+    const data = await res.json();
+
+    if (res.ok) {
+      removeRow(incidentId);
+      showToast('Report verified and published to map', 'success');
+    } else {
+      showToast(data.detail || 'Could not verify', 'error');
+      if (btn) { btn.textContent = '✓ Verify'; btn.disabled = false; }
+    }
+  } catch (e) {
+    showToast('Network error', 'error');
+    if (btn) { btn.textContent = '✓ Verify'; btn.disabled = false; }
+  }
+}
+
+// ── Reject modal ───────────────────────────────────
+function openRejectModal(incidentId) {
+  rejectTargetId = incidentId;
+  document.getElementById('reject-note').value = '';
+  const modal = document.getElementById('reject-modal');
+  modal.style.display = 'flex';
+  document.getElementById('reject-note').focus();
+}
+
+function closeRejectModal() {
+  rejectTargetId = null;
+  document.getElementById('reject-modal').style.display = 'none';
+}
+
+document.getElementById('confirm-reject-btn').addEventListener('click', async () => {
+  if (!rejectTargetId) return;
+
+  const note = document.getElementById('reject-note').value.trim();
+  const btn  = document.getElementById('confirm-reject-btn');
+  btn.textContent = 'Rejecting...';
+  btn.disabled    = true;
+
+  try {
+    const res = await fetch(`/admin/incidents/${rejectTargetId}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      removeRow(rejectTargetId);
+      closeRejectModal();
+      showToast('Report rejected', 'error');
+    } else {
+      showToast(data.detail || 'Could not reject', 'error');
+    }
+  } catch (e) {
+    showToast('Network error', 'error');
+  } finally {
+    btn.textContent = 'Reject report';
+    btn.disabled    = false;
+  }
+});
+
+// ── Remove row with animation ──────────────────────
+function removeRow(incidentId) {
+  const row = document.getElementById(`row-${incidentId}`);
+  if (!row) return;
+  row.style.opacity    = '0';
+  row.style.transition = 'opacity 0.3s';
+  setTimeout(() => {
+    row.remove();
+    // show empty state if no rows left
+    const tbody = document.getElementById('pending-tbody');
+    if (tbody && tbody.children.length === 0) {
+      tbody.closest('.table-wrap').innerHTML = `
+        <div style="text-align:center;padding:48px 32px;color:var(--text-muted);">
+          <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;margin-bottom:8px;">ALL CLEAR</div>
+          <div style="font-size:0.875rem;">No reports pending review</div>
+        </div>`;
+    }
+  }, 300);
+}
+
+// close on backdrop click
+document.getElementById('reject-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeRejectModal();
+});
+</script>
+{% endblock %}
