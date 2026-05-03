@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Register — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page main--centered">
+  <div style="width: 100%; max-width: 440px; padding: 24px;">
+
+    <!-- Brand -->
+    <div style="text-align:center; margin-bottom: 40px;">
+      <div style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; margin-bottom: 6px;">
+        ● SAFE STEPS
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Join Mumbai's community safety network
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="page-header__eyebrow" style="margin-bottom: 16px;">New account</div>
+      <div style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; margin-bottom: 24px;">
+        Create your account
+      </div>
+
+      {% if error %}
+        <div class="alert alert--error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/auth/register">
+
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input
+            class="form-input"
+            type="text"
+            id="username"
+            name="username"
+            placeholder="choose_a_username"
+            autocomplete="username"
+            required
+            minlength="3"
+            maxlength="100"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            class="form-input"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="min. 8 characters"
+            autocomplete="new-password"
+            required
+            minlength="8"
+          />
+          <!-- strength bar -->
+          <div id="strength-bar" style="
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+          ">
+            <div id="strength-fill" style="height:100%; width:0; transition: width 0.3s, background 0.3s;"></div>
+          </div>
+          <div id="strength-label" style="font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); margin-top: 4px;"></div>
+        </div>
+
+        <button type="submit" class="btn btn--primary" style="width: 100%; justify-content: center; padding: 11px;">
+          Create account →
+        </button>
+      </form>
+
+      <div style="margin-top: 20px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+        Already have an account?
+        <a href="/auth/login" style="color: var(--accent);">Sign in</a>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.08em;">
+      FOR MUMBAI RESIDENTS · SECURE · ANONYMOUS REPORTING AVAILABLE
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Password strength indicator
+  const passwordInput = document.getElementById('password');
+  const fill          = document.getElementById('strength-fill');
+  const label         = document.getElementById('strength-label');
+
+  passwordInput.addEventListener('input', () => {
+    const val = passwordInput.value;
+    let score = 0;
+    if (val.length >= 8)              score++;
+    if (/[A-Z]/.test(val))            score++;
+    if (/[0-9]/.test(val))            score++;
+    if (/[^A-Za-z0-9]/.test(val))     score++;
+
+    const levels = [
+      { w: '0%',   bg: 'transparent',          text: '' },
+      { w: '25%',  bg: 'var(--accent-red)',     text: 'weak' },
+      { w: '50%',  bg: 'var(--accent)',         text: 'fair' },
+      { w: '75%',  bg: 'var(--accent-blue)',    text: 'good' },
+      { w: '100%', bg: 'var(--accent-green)',   text: 'strong' },
+    ];
+
+    fill.style.width      = levels[score].w;
+    fill.style.background = levels[score].bg;
+    label.textContent     = levels[score].text;
+    label.style.color     = levels[score].bg;
+  });
+</script>
+{% endblock %}

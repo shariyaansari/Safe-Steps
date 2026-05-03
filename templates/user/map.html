@@ -1,0 +1,533 @@
+{% extends "base.html" %}
+{% block title %}Live Map — Safe Steps{% endblock %}
+
+{% block extra_css %}
+/* map fills the full viewport below the nav */
+.map-page { display: flex; height: calc(100vh - var(--nav-h)); overflow: hidden; }
+
+/* ── Left panel ── */
+.map-panel {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-panel__header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.map-panel__title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* live indicator */
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent-green);
+  letter-spacing: 0.08em;
+}
+.live-dot::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.live-dot.offline { color: var(--text-muted); }
+.live-dot.offline::before { background: var(--text-muted); animation: none; }
+
+/* filter controls */
+.filter-row { display: flex; gap: 6px; margin-top: 10px; }
+.filter-row .form-select { font-size: 0.78rem; padding: 6px 8px; }
+
+/* incident feed */
+.incident-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.incident-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.incident-card:hover { border-color: var(--border-bright); background: var(--bg-hover); }
+.incident-card.new-flash { animation: newFlash 1.2s ease; }
+
+@keyframes newFlash {
+  0%   { border-color: var(--accent); background: rgba(245,158,11,0.08); }
+  100% { border-color: var(--border); background: var(--bg-elevated); }
+}
+
+.incident-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.incident-card__area {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.incident-card__time {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+.incident-card__desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.incident-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* upvote button */
+.upvote-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.upvote-btn:hover { border-color: var(--accent); color: var(--accent); }
+.upvote-btn.voted { background: rgba(245,158,11,0.1); border-color: var(--accent); color: var(--accent); }
+
+/* ── Map container ── */
+#map { flex: 1; }
+
+/* ── Toggle heatmap button ── */
+.map-controls {
+  position: absolute;
+  top: calc(var(--nav-h) + 12px);
+  right: 16px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-ctrl-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.map-ctrl-btn:hover,
+.map-ctrl-btn.active { background: var(--bg-elevated); color: var(--accent); border-color: var(--accent); }
+{% endblock %}
+
+{% block content %}
+<div class="page" style="padding-top: var(--nav-h);">
+<div class="map-page">
+
+  <!-- ── Left panel ── -->
+  <div class="map-panel">
+    <div class="map-panel__header">
+      <div class="map-panel__title">Live incident feed</div>
+
+      <!-- WebSocket status -->
+      <span class="live-dot offline" id="ws-status">CONNECTING...</span>
+
+      <!-- Filters -->
+      <div class="filter-row">
+        <select class="form-select" id="filter-type" style="flex:1;">
+          <option value="">All types</option>
+          {% for t in incident_types %}
+            <option value="{{ t }}">{{ t.title() }}</option>
+          {% endfor %}
+        </select>
+        <select class="form-select" id="filter-status" style="flex:1;">
+          <option value="verified">Verified</option>
+          <option value="pending">Pending</option>
+          <option value="">All</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Incident cards -->
+    <div class="incident-feed" id="incident-feed">
+      <div style="text-align:center; padding: 32px; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem;">
+        LOADING INCIDENTS...
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Map ── -->
+  <div id="map"></div>
+
+  <!-- ── Floating map controls ── -->
+  <div class="map-controls">
+    <button class="map-ctrl-btn" id="btn-heatmap">⬡ Heatmap</button>
+    <button class="map-ctrl-btn" id="btn-pins">◉ Pins</button>
+    <a href="/reports/submit" class="map-ctrl-btn" style="text-align:center; text-decoration:none; color:var(--accent); border-color:var(--accent);">+ Report</a>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet heat plugin -->
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+<script>
+// ── State ──────────────────────────────────────────
+let map, heatLayer, pinsLayer;
+let allIncidents     = [];
+let votedIncidentIds = new Set();
+let showHeatmap      = false;
+let ws               = null;
+
+// ── Init map ───────────────────────────────────────
+function initMap() {
+  map = L.map('map', {
+    center: [19.0760, 72.8777],   // Mumbai
+    zoom: 12,
+    zoomControl: true
+  });
+
+  // Dark tile layer (CartoDB dark matter)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  pinsLayer = L.layerGroup().addTo(map);
+}
+
+// ── Custom marker icons by type ────────────────────
+function getMarkerIcon(type, status) {
+  const colors = {
+    theft:      '#3b82f6',
+    assault:    '#ef4444',
+    harassment: '#f59e0b',
+    robbery:    '#f87171',
+    vandalism:  '#94a3b8',
+    other:      '#64748b',
+  };
+  const color = colors[type] || '#64748b';
+  const opacity = status === 'verified' ? 1 : 0.5;
+
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      width: 12px; height: 12px;
+      background: ${color};
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      opacity: ${opacity};
+      box-shadow: 0 0 6px ${color};
+    "></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  });
+}
+
+// ── Render incident card in panel ─────────────────
+function renderCard(inc, prepend = false) {
+  const feed  = document.getElementById('incident-feed');
+  const card  = document.createElement('div');
+  card.className = 'incident-card';
+  card.dataset.id = inc.id;
+
+  if (prepend) card.classList.add('new-flash');
+
+  const voted = votedIncidentIds.has(inc.id);
+  const date  = new Date(inc.occurred_at).toLocaleDateString('en-IN', {
+    day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'
+  });
+
+  card.innerHTML = `
+    <div class="incident-card__top">
+      <span class="badge badge--${inc.incident_type}">${inc.incident_type}</span>
+      <span class="incident-card__time">${date}</span>
+    </div>
+    <div class="incident-card__area">${inc.area}</div>
+    ${inc.description ? `<div class="incident-card__desc">${inc.description}</div>` : ''}
+    <div class="incident-card__footer">
+      <span class="badge badge--${inc.status}">${inc.status}</span>
+      <button
+        class="upvote-btn ${voted ? 'voted' : ''}"
+        data-id="${inc.id}"
+        ${voted ? 'disabled' : ''}
+      >▲ ${inc.upvotes}</button>
+    </div>
+  `;
+
+  // click card → pan map to incident
+  card.addEventListener('click', (e) => {
+    if (e.target.classList.contains('upvote-btn')) return;
+    map.setView([inc.latitude, inc.longitude], 15, { animate: true });
+  });
+
+  // upvote
+  card.querySelector('.upvote-btn')?.addEventListener('click', () => upvote(inc.id));
+
+  if (prepend && feed.firstChild) {
+    feed.insertBefore(card, feed.firstChild);
+  } else {
+    feed.appendChild(card);
+  }
+}
+
+// ── Render all incidents on map + panel ───────────
+function renderAll(incidents) {
+  pinsLayer.clearLayers();
+  document.getElementById('incident-feed').innerHTML = '';
+
+  if (!incidents.length) {
+    document.getElementById('incident-feed').innerHTML = `
+      <div style="text-align:center;padding:32px;color:var(--text-muted);font-family:var(--font-mono);font-size:0.7rem;">
+        NO INCIDENTS FOUND
+      </div>`;
+    return;
+  }
+
+  incidents.forEach(inc => {
+    // pin on map
+    const marker = L.marker([inc.latitude, inc.longitude], {
+      icon: getMarkerIcon(inc.incident_type, inc.status)
+    });
+    marker.bindPopup(`
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;min-width:180px;">
+        <div style="font-weight:600;margin-bottom:4px;text-transform:uppercase;">${inc.incident_type}</div>
+        <div style="color:#64748b;margin-bottom:6px;">${inc.area}</div>
+        ${inc.description ? `<div style="margin-bottom:6px;">${inc.description}</div>` : ''}
+        <div style="color:#64748b;font-size:11px;">${new Date(inc.occurred_at).toLocaleString('en-IN')}</div>
+        <div style="margin-top:6px;">▲ ${inc.upvotes} upvotes</div>
+      </div>
+    `);
+    pinsLayer.addLayer(marker);
+
+    // card in side panel
+    renderCard(inc);
+  });
+}
+
+// ── Load incidents from API ────────────────────────
+async function loadIncidents() {
+  const type   = document.getElementById('filter-type').value;
+  const status = document.getElementById('filter-status').value;
+
+  let url = `/reports/map-data?`;
+  if (type)   url += `incident_type=${type}&`;
+  if (status) url += `status_filter=${status}&`;
+
+  try {
+    const res  = await fetch(url);
+    allIncidents = await res.json();
+    renderAll(allIncidents);
+
+    if (showHeatmap) loadHeatmap();
+  } catch (e) {
+    console.error('Failed to load incidents:', e);
+  }
+}
+
+// ── Load heatmap data ──────────────────────────────
+async function loadHeatmap() {
+  const type = document.getElementById('filter-type').value;
+  let url    = `/analytics/heatmap?`;
+  if (type) url += `incident_type=${type}`;
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(data, {
+      radius: 30,
+      blur: 20,
+      maxZoom: 17,
+      gradient: { 0.2: '#3b82f6', 0.5: '#f59e0b', 0.8: '#ef4444' }
+    }).addTo(map);
+  } catch (e) {
+    console.error('Failed to load heatmap:', e);
+  }
+}
+
+// ── Load which incidents this user voted on ────────
+async function loadMyVotes() {
+  try {
+    const res  = await fetch('/user/my-votes');
+    const data = await res.json();
+    votedIncidentIds = new Set(data.voted_incident_ids);
+  } catch (e) { /* not logged in or error — skip */ }
+}
+
+// ── Upvote ─────────────────────────────────────────
+async function upvote(incidentId) {
+  try {
+    const res  = await fetch(`/reports/${incidentId}/upvote`, { method: 'POST' });
+    const data = await res.json();
+
+    if (res.ok) {
+      votedIncidentIds.add(incidentId);
+
+      // update button in card
+      const btn = document.querySelector(`.upvote-btn[data-id="${incidentId}"]`);
+      if (btn) {
+        btn.textContent = `▲ ${data.upvotes}`;
+        btn.classList.add('voted');
+        btn.disabled = true;
+      }
+      showToast('Upvoted', 'success', 2000);
+    } else {
+      showToast(data.detail || 'Could not upvote', 'error');
+    }
+  } catch (e) {
+    showToast('Network error', 'error');
+  }
+}
+
+// ── WebSocket connection ───────────────────────────
+function connectWS() {
+  // extract token from cookie (strip "Bearer " prefix)
+  const raw   = getCookie('access_token') || '';
+  const token = raw.replace('Bearer ', '').trim();
+  if (!token) return;
+
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(`${proto}://${location.host}/ws/incidents?token=${token}`);
+
+  ws.onopen = () => {
+    const el = document.getElementById('ws-status');
+    el.textContent = 'LIVE';
+    el.classList.remove('offline');
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+
+    if (data.type === 'connected') return;   // welcome message — ignore
+
+    if (data.type === 'new_incident') {
+      // add to allIncidents array
+      allIncidents.unshift(data);
+
+      // add pin to map
+      const marker = L.marker([data.latitude, data.longitude], {
+        icon: getMarkerIcon(data.incident_type, 'verified')
+      });
+      marker.bindPopup(`
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;">
+          <div style="font-weight:600;text-transform:uppercase;">${data.incident_type}</div>
+          <div style="color:#64748b;">${data.area}</div>
+          ${data.description ? `<div>${data.description}</div>` : ''}
+        </div>
+      `);
+      pinsLayer.addLayer(marker);
+
+      // add card to top of feed
+      renderCard(data, true);
+
+      // toast notification
+      showToast(`New incident in ${data.area} — ${data.incident_type}`, 'incident', 6000);
+    }
+
+    if (data.type === 'pong') return;
+  };
+
+  ws.onclose = () => {
+    const el = document.getElementById('ws-status');
+    el.textContent = 'OFFLINE';
+    el.classList.add('offline');
+
+    // auto-reconnect after 5 seconds
+    setTimeout(connectWS, 5000);
+  };
+
+  ws.onerror = () => ws.close();
+
+  // heartbeat — send ping every 30s to keep connection alive
+  setInterval(() => {
+    if (ws && ws.readyState === WebSocket.OPEN) ws.send('ping');
+  }, 30000);
+}
+
+// ── Map control buttons ────────────────────────────
+document.getElementById('btn-heatmap').addEventListener('click', function () {
+  showHeatmap = !showHeatmap;
+  this.classList.toggle('active', showHeatmap);
+
+  if (showHeatmap) {
+    loadHeatmap();
+    pinsLayer.remove();
+  } else {
+    if (heatLayer) map.removeLayer(heatLayer);
+    pinsLayer.addTo(map);
+  }
+});
+
+document.getElementById('btn-pins').addEventListener('click', function () {
+  if (map.hasLayer(pinsLayer)) {
+    pinsLayer.remove();
+    this.classList.remove('active');
+  } else {
+    pinsLayer.addTo(map);
+    this.classList.add('active');
+  }
+});
+
+// ── Filter change ──────────────────────────────────
+document.getElementById('filter-type').addEventListener('change', loadIncidents);
+document.getElementById('filter-status').addEventListener('change', loadIncidents);
+
+// ── Boot ───────────────────────────────────────────
+(async () => {
+  initMap();
+  await loadMyVotes();
+  await loadIncidents();
+  connectWS();
+})();
+</script>
+{% endblock %}

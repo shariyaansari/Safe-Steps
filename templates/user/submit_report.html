@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% block title %}Report Incident — Safe Steps{% endblock %}
+
+{% block extra_css %}
+.submit-page {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+}
+
+/* ── Form panel ── */
+.submit-form-panel {
+  overflow-y: auto;
+  padding: 32px;
+  border-right: 1px solid var(--border);
+}
+
+/* ── Map picker ── */
+.submit-map-panel { position: relative; }
+#picker-map { width: 100%; height: 100%; }
+
+.map-picker-hint {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  z-index: 500;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.coords-display {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  z-index: 500;
+  line-height: 1.8;
+}
+
+.gps-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 500;
+}
+
+/* ── Image preview ── */
+#image-preview {
+  display: none;
+  margin-top: 10px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  position: relative;
+}
+#image-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  display: block;
+}
+#remove-image {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  border-radius: 50%;
+  width: 24px; height: 24px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+}
+
+/* ── Drop zone ── */
+.dropzone {
+  border: 2px dashed var(--border-bright);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dropzone:hover,
+.dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(245,158,11,0.04);
+}
+.dropzone__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.dropzone__sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ── Anon toggle ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.toggle-row__info { flex: 1; }
+.toggle-row__title { font-size: 0.875rem; font-weight: 500; }
+.toggle-row__sub   { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+/* toggle switch */
+.toggle {
+  position: relative;
+  width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle__slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-bright);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle__slider::before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle input:checked + .toggle__slider { background: var(--accent); }
+.toggle input:checked + .toggle__slider::before { transform: translateX(18px); }
+{% endblock %}
+
+{% block content %}
+<div class="page" style="padding-top: var(--nav-h);">
+<div class="submit-page">
+
+  <!-- ── Form panel ── -->
+  <div class="submit-form-panel">
+
+    <div class="page-header">
+      <div class="page-header__eyebrow">Incident reporting</div>
+      <div class="page-header__title">Report an incident</div>
+      <div class="page-header__sub">
+        Click the map on the right to set the exact location, or use GPS.
+      </div>
+    </div>
+
+    {% if error %}
+      <div class="alert alert--error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/reports/submit" enctype="multipart/form-data" id="report-form">
+
+      <!-- Hidden lat/lng fields populated by map -->
+      <input type="hidden" name="latitude"  id="lat-input"  required />
+      <input type="hidden" name="longitude" id="lng-input"  required />
+
+      <!-- Incident type -->
+      <div class="form-group">
+        <label class="form-label" for="incident_type">Incident type *</label>
+        <select class="form-select" name="incident_type" id="incident_type" required>
+          <option value="" disabled selected>Select type</option>
+          {% for t in incident_types %}
+            <option value="{{ t }}">{{ t.title() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- When it happened -->
+      <div class="form-group">
+        <label class="form-label" for="occurred_at">When did it happen? *</label>
+        <input
+          class="form-input"
+          type="datetime-local"
+          name="occurred_at"
+          id="occurred_at"
+          required
+        />
+      </div>
+
+      <!-- Area -->
+      <div class="form-group">
+        <label class="form-label" for="area">Area / Locality *</label>
+        <input
+          class="form-input"
+          type="text"
+          name="area"
+          id="area"
+          placeholder="e.g. Kurla West, BKC, Dadar"
+          required
+        />
+      </div>
+
+      <!-- Address -->
+      <div class="form-group">
+        <label class="form-label" for="address">Full address <span class="text-muted">(optional)</span></label>
+        <input
+          class="form-input"
+          type="text"
+          name="address"
+          id="address"
+          placeholder="Street, landmark..."
+        />
+      </div>
+
+      <!-- Pincode -->
+      <div class="form-group">
+        <label class="form-label" for="pincode">Pincode <span class="text-muted">(optional)</span></label>
+        <input
+          class="form-input"
+          type="text"
+          name="pincode"
+          id="pincode"
+          placeholder="400001"
+          maxlength="6"
+          pattern="[0-9]{6}"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label class="form-label" for="description">Description <span class="text-muted">(optional)</span></label>
+        <textarea
+          class="form-textarea"
+          name="description"
+          id="description"
+          placeholder="Describe what happened..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <!-- Image upload -->
+      <div class="form-group">
+        <label class="form-label">Photo evidence <span class="text-muted">(optional)</span></label>
+        <div
+          class="dropzone"
+          id="dropzone"
+          onclick="document.getElementById('image').click()"
+        >
+          <div class="dropzone__label">DRAG & DROP OR CLICK TO UPLOAD</div>
+          <div class="dropzone__sub">JPG, PNG, WEBP — max 5 MB</div>
+        </div>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          accept="image/*"
+          style="display:none"
+        />
+        <div id="image-preview">
+          <img id="preview-img" src="" alt="Preview" />
+          <button type="button" id="remove-image">×</button>
+        </div>
+      </div>
+
+      <!-- Anonymous toggle -->
+      <div class="form-group">
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <div class="toggle-row__title">Report anonymously</div>
+            <div class="toggle-row__sub">Your username won't be shown publicly</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" name="is_anonymous" value="true" id="anon-toggle" />
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Location confirmation -->
+      <div id="location-status" class="alert alert--info" style="display:none;"></div>
+
+      <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center;padding:12px;" id="submit-btn">
+        Submit report →
+      </button>
+    </form>
+
+  </div>
+
+  <!-- ── Map picker ── -->
+  <div class="submit-map-panel">
+    <div class="map-picker-hint">CLICK MAP TO PIN INCIDENT LOCATION</div>
+
+    <div id="picker-map"></div>
+
+    <!-- Coordinates display -->
+    <div class="coords-display" id="coords-display" style="display:none;">
+      <div>LAT: <span id="disp-lat" style="color:var(--accent);">—</span></div>
+      <div>LNG: <span id="disp-lng" style="color:var(--accent);">—</span></div>
+    </div>
+
+    <!-- GPS button -->
+    <button class="btn btn--ghost gps-btn" id="gps-btn">
+      ◎ Use my location
+    </button>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Map picker init ────────────────────────────────
+const pickerMap = L.map('picker-map', {
+  center: [19.0760, 72.8777],
+  zoom: 12,
+  zoomControl: true
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(pickerMap);
+
+let pickerMarker = null;
+
+// ── Set pin on map ─────────────────────────────────
+function setPin(lat, lng) {
+  // remove old marker
+  if (pickerMarker) pickerMap.removeLayer(pickerMarker);
+
+  pickerMarker = L.marker([lat, lng], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div style="
+        width: 14px; height: 14px;
+        background: var(--accent, #f59e0b);
+        border: 2px solid white;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(245,158,11,0.8);
+      "></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+    })
+  }).addTo(pickerMap);
+
+  // update hidden form fields
+  document.getElementById('lat-input').value  = lat.toFixed(6);
+  document.getElementById('lng-input').value  = lng.toFixed(6);
+
+  // update display
+  document.getElementById('disp-lat').textContent = lat.toFixed(5);
+  document.getElementById('disp-lng').textContent = lng.toFixed(5);
+  document.getElementById('coords-display').style.display = 'block';
+
+  // show location status
+  const status = document.getElementById('location-status');
+  status.style.display = 'block';
+  status.textContent   = `📍 Location pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+}
+
+// click on map to pin
+pickerMap.on('click', (e) => setPin(e.latlng.lat, e.latlng.lng));
+
+// ── GPS button ─────────────────────────────────────
+document.getElementById('gps-btn').addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    showToast('Geolocation not supported by your browser', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('gps-btn');
+  btn.textContent = '◎ Locating...';
+  btn.disabled    = true;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      setPin(latitude, longitude);
+      pickerMap.setView([latitude, longitude], 16, { animate: true });
+      btn.textContent = '◎ Use my location';
+      btn.disabled    = false;
+      showToast('Location detected', 'success', 2000);
+    },
+    (err) => {
+      showToast('Could not get location: ' + err.message, 'error');
+      btn.textContent = '◎ Use my location';
+      btn.disabled    = false;
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+});
+
+// ── Image preview ──────────────────────────────────
+const imageInput = document.getElementById('image');
+const preview    = document.getElementById('image-preview');
+const previewImg = document.getElementById('preview-img');
+const dropzone   = document.getElementById('dropzone');
+
+function showPreview(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Image must be under 5 MB', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src       = e.target.result;
+    preview.style.display = 'block';
+    dropzone.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+imageInput.addEventListener('change', () => showPreview(imageInput.files[0]));
+
+document.getElementById('remove-image').addEventListener('click', () => {
+  imageInput.value      = '';
+  preview.style.display  = 'none';
+  dropzone.style.display = 'block';
+});
+
+// drag & drop
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', ()  => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    // set file on input
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    imageInput.files = dt.files;
+    showPreview(file);
+  }
+});
+
+// ── Form validation ────────────────────────────────
+document.getElementById('report-form').addEventListener('submit', (e) => {
+  const lat = document.getElementById('lat-input').value;
+  const lng = document.getElementById('lng-input').value;
+
+  if (!lat || !lng) {
+    e.preventDefault();
+    showToast('Please pin a location on the map first', 'error');
+    return;
+  }
+
+  // disable button to prevent double submit
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Submitting...';
+  btn.disabled    = true;
+});
+
+// ── Default occurred_at to now ────────────────────
+const occurredInput  = document.getElementById('occurred_at');
+const now            = new Date();
+now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+occurredInput.value  = now.toISOString().slice(0, 16);
+occurredInput.max    = now.toISOString().slice(0, 16);  // can't report future incidents
+</script>
+{% endblock %}

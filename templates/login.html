@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Login — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page main--centered">
+  <div style="width: 100%; max-width: 420px; padding: 24px;">
+
+    <!-- Brand -->
+    <div style="text-align:center; margin-bottom: 40px;">
+      <div style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; margin-bottom: 6px;">
+        ● SAFE STEPS
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Mumbai community crime reporting platform
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="page-header__eyebrow" style="margin-bottom: 16px;">Authentication required</div>
+      <div style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; margin-bottom: 24px;">
+        Sign in to your account
+      </div>
+
+      {% if error %}
+        <div class="alert alert--error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/auth/login">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input
+            class="form-input"
+            type="text"
+            id="username"
+            name="username"
+            placeholder="your_username"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn--primary" style="width: 100%; justify-content: center; padding: 11px;">
+          Sign in →
+        </button>
+      </form>
+
+      <div style="margin-top: 20px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+        No account?
+        <a href="/auth/register" style="color: var(--accent);">Create one</a>
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div style="text-align: center; margin-top: 24px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.08em;">
+      FOR MUMBAI RESIDENTS · SECURE · ANONYMOUS REPORTING AVAILABLE
+    </div>
+
+  </div>
+</div>
+{% endblock %}
