@@ -50,7 +50,7 @@ async def dashboard(
         )
     )
 
-    return templates.TemplateResponse("user/dashboard.html", {
+    return templates.TemplateResponse(request, "user/dashboard.html", {
         "request": request,
         "user": current_user,
         "my_incidents": my_incidents,
@@ -70,7 +70,7 @@ async def map_view(
     request: Request,
     current_user: User = Depends(get_current_active_user)
 ):
-    return templates.TemplateResponse("user/map.html", {
+    return templates.TemplateResponse(request, "user/map.html", {
         "request": request,
         "user": current_user,
         "incident_types": [t.value for t in IncidentType]
@@ -114,7 +114,7 @@ async def my_incidents(
     )
     total = total_result.scalar()
 
-    return templates.TemplateResponse("user/my_incidents.html", {
+    return templates.TemplateResponse(request, "user/my_incidents.html", {
         "request": request,
         "user": current_user,
         "incidents": incidents,
@@ -167,7 +167,7 @@ async def profile(
     request: Request,
     current_user: User = Depends(get_current_active_user)
 ):
-    return templates.TemplateResponse("user/profile.html", {
+    return templates.TemplateResponse(request, "user/profile.html", {
         "request": request,
         "user": current_user
     })
@@ -192,7 +192,7 @@ async def update_profile(
         )
     )
     if result.scalars().first():
-        return templates.TemplateResponse("user/profile.html", {
+        return templates.TemplateResponse(request, "user/profile.html", {
             "request": request,
             "user": current_user,
             "error": "Email is already in use by another account"
@@ -201,7 +201,7 @@ async def update_profile(
     current_user.email = email
     await db.commit()
 
-    return templates.TemplateResponse("user/profile.html", {
+    return templates.TemplateResponse(request, "user/profile.html", {
         "request": request,
         "user": current_user,
         "success": "Profile updated successfully"
@@ -222,21 +222,21 @@ async def change_password(
     current_user: User = Depends(get_current_active_user)
 ):
     if new_password != confirm_password:
-        return templates.TemplateResponse("user/profile.html", {
+        return templates.TemplateResponse(request, "user/profile.html", {
             "request": request,
             "user": current_user,
             "error": "New passwords do not match"
         })
 
     if not verify_password(current_password[:72], current_user.password_hash):
-        return templates.TemplateResponse("user/profile.html", {
+        return templates.TemplateResponse(request, "user/profile.html", {
             "request": request,
             "user": current_user,
             "error": "Current password is incorrect"
         })
 
     if len(new_password) < 8:
-        return templates.TemplateResponse("user/profile.html", {
+        return templates.TemplateResponse(request, "user/profile.html", {
             "request": request,
             "user": current_user,
             "error": "New password must be at least 8 characters"
@@ -245,7 +245,7 @@ async def change_password(
     current_user.password_hash = get_password_hash(new_password[:72])
     await db.commit()
 
-    return templates.TemplateResponse("user/profile.html", {
+    return templates.TemplateResponse(request, "user/profile.html", {
         "request": request,
         "user": current_user,
         "success": "Password changed successfully"

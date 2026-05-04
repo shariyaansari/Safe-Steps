@@ -39,7 +39,7 @@ async def admin_dashboard(
     )
     pending_incidents = pending_q.scalars().all()
 
-    return templates.TemplateResponse("admin/dashboard.html", {
+    return templates.TemplateResponse(request, "admin/dashboard.html", {
         "request": request,
         "user": current_user,
         "stats": {
@@ -80,7 +80,7 @@ async def incident_queue(
     total_result = await db.execute(select(func.count()).select_from(Incident))
     total = total_result.scalar()
 
-    return templates.TemplateResponse("admin/incidents.html", {
+    return templates.TemplateResponse(request, "admin/incidents.html", {
         "request": request,
         "user": current_user,
         "incidents": incidents,
@@ -294,7 +294,7 @@ async def audit_log(
     total_result = await db.execute(select(func.count()).select_from(AuditLog))
     total = total_result.scalar()
 
-    return templates.TemplateResponse("admin/audit_log.html", {
+    return templates.TemplateResponse(request, "admin/audit_log.html", {
         "request": request,
         "user": current_user,
         "logs": logs,
@@ -318,7 +318,7 @@ async def user_list(
     )
     users = result.scalars().all()
 
-    return templates.TemplateResponse("admin/users.html", {
+    return templates.TemplateResponse(request, "admin/users.html", {
         "request": request,
         "user": current_user,
         "users": users

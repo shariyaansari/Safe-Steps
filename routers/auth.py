@@ -21,7 +21,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/register", response_class=HTMLResponse, name="auth.register")
 async def register_get(request: Request):
-    return templates.TemplateResponse("sign_up.html", {"request": request})
+    return templates.TemplateResponse(request, "signup.html", {"request": request})
 
 
 @router.post("/register", name="auth.register_post")
@@ -37,7 +37,7 @@ async def register_post(
         select(User).where((User.username == username) | (User.email == email))
     )
     if result.scalars().first():
-        return templates.TemplateResponse("sign_up.html", {
+        return templates.TemplateResponse(request, "signup.html", {
             "request": request,
             "error": "Username or email already taken"
         })
@@ -74,7 +74,7 @@ async def register_post(
 
 @router.get("/login", response_class=HTMLResponse, name="auth.login")
 async def login_get(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request, "login.html", {"request": request})
 
 
 @router.post("/login", name="auth.login_post")
@@ -84,17 +84,22 @@ async def login_post(
     password: str = Form(...),
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(User).where(User.username == username))
+    login_value = username.strip()
+    result = await db.execute(
+        select(User).where(
+            (User.username == login_value) | (User.email == login_value)
+        )
+    )
     user = result.scalars().first()
 
     if not user or not verify_password(password[:72], user.password_hash):
-        return templates.TemplateResponse("login.html", {
+        return templates.TemplateResponse(request, "login.html", {
             "request": request,
             "error": "Invalid username or password"
         })
 
     if not user.is_active:
-        return templates.TemplateResponse("login.html", {
+        return templates.TemplateResponse(request, "login.html", {
             "request": request,
             "error": "Your account has been deactivated"
         })
