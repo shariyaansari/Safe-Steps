@@ -3,7 +3,7 @@ from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from core.database import get_db
-from core.security import SECRET_KEY, ALGORITHM
+from core.config import settings
 from models import User,UserRole
 import logging
 
@@ -29,7 +29,10 @@ async def get_current_user(request: Request, db: AsyncSession = Depends(get_db))
             token = token.split(" ")[1]
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, 
+                            settings.SECRET_KEY, 
+                            algorithms=[settings.ALGORITHM]
+                            )
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
@@ -53,7 +56,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
         )
     return current_user
 
-async def get_current_admin(current_user: User = Depends(get_current_active_user)):
+async def require_admin(current_user: User = Depends(get_current_active_user)):
     if current_user.role != UserRole.admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

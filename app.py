@@ -8,6 +8,7 @@ from core.config import settings
 
 from routers import auth, user, reports, admin, analytics
 from ws.events import router as ws_router
+import asyncio
 from ws.events import redis_subscriber
 
 
@@ -23,11 +24,9 @@ from ws.events import redis_subscriber
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("[SafeSteps] Database tables ready")
-    asyncio.create_task(redis_subscriber())   # ← add this line
+    asyncio.create_task(redis_subscriber())   # ← add this
     yield
     await engine.dispose()
-    print("[SafeSteps] Database connection closed")
 
 
 # ─────────────────────────────────────────────
