@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}Reports Queue — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page page--sidebar">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__section">
+      <div class="sidebar__label">Admin panel</div>
+      <a href="/admin/dashboard" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        Dashboard
+      </a>
+      <a href="/admin/incidents" class="sidebar__link active">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Reports queue
+      </a>
+      <a href="/admin/users" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Users
+      </a>
+      <a href="/admin/audit-log" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Audit log
+      </a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__label">Quick links</div>
+      <a href="/user/map"    class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        Live map
+      </a>
+      <a href="/auth/logout" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-header__eyebrow">Moderation</div>
+      <div class="page-header__title">Reports queue</div>
+      <div class="page-header__sub">Review, verify or reject submitted incident reports</div>
+    </div>
+
+    <!-- Status filter tabs -->
+    <div class="flex gap-1 mb-2" style="flex-wrap:wrap;">
+      <a href="/admin/incidents"
+         class="btn btn--sm {% if not status_filter %}btn--primary{% else %}btn--ghost{% endif %}">
+        All
+      </a>
+      <a href="/admin/incidents?status_filter=pending"
+         class="btn btn--sm {% if status_filter == 'pending' %}btn--primary{% else %}btn--ghost{% endif %}">
+        Pending
+      </a>
+      <a href="/admin/incidents?status_filter=verified"
+         class="btn btn--sm {% if status_filter == 'verified' %}btn--primary{% else %}btn--ghost{% endif %}">
+        Verified
+      </a>
+      <a href="/admin/incidents?status_filter=rejected"
+         class="btn btn--sm {% if status_filter == 'rejected' %}btn--primary{% else %}btn--ghost{% endif %}">
+        Rejected
+      </a>
+    </div>
+
+    {% if incidents %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Area</th>
+            <th>Description</th>
+            <th>Occurred</th>
+            <th>Reported</th>
+            <th>Upvotes</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inc in incidents %}
+          <tr id="row-{{ inc.id }}">
+            <td>
+              <span class="badge badge--{{ inc.incident_type.value }}">{{ inc.incident_type.value }}</span>
+            </td>
+            <td class="mono" style="font-size:0.78rem;">{{ inc.area }}</td>
+            <td style="max-width:200px;">
+              {% if inc.description %}
+                <span style="font-size:0.8rem;color:var(--text-secondary);
+                             display:-webkit-box;-webkit-line-clamp:2;
+                             -webkit-box-orient:vertical;overflow:hidden;">
+                  {{ inc.description }}
+                </span>
+              {% else %}
+                <span class="text-muted" style="font-size:0.75rem;">—</span>
+              {% endif %}
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;">
+              {{ inc.occurred_at.strftime('%d %b %Y, %H:%M') }}
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;">
+              {{ inc.reported_at.strftime('%d %b %Y') }}
+            </td>
+            <td class="mono" style="font-size:0.8rem;text-align:center;">
+              {{ inc.upvotes }}
+            </td>
+            <td>
+              <span class="badge badge--{{ inc.status.value }}">{{ inc.status.value }}</span>
+            </td>
+            <td>
+              <div class="flex gap-1" style="flex-wrap:wrap;">
+                {% if inc.status.value == 'pending' %}
+                  <button class="btn btn--success btn--sm" onclick="verifyIncident('{{ inc.id }}')">✓</button>
+                  <button class="btn btn--danger btn--sm"  onclick="openRejectModal('{{ inc.id }}')">✗</button>
+                {% elif inc.status.value == 'verified' %}
+                  <button class="btn btn--danger btn--sm"  onclick="openRejectModal('{{ inc.id }}')">Reject</button>
+                {% elif inc.status.value == 'rejected' %}
+                  <button class="btn btn--success btn--sm" onclick="verifyIncident('{{ inc.id }}')">Verify</button>
+                {% endif %}
+                <button class="btn btn--ghost btn--sm" onclick="openDeleteModal('{{ inc.id }}')">Del</button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}
+        <a href="/admin/incidents?page={{ page - 1 }}{% if status_filter %}&status_filter={{ status_filter }}{% endif %}">← Prev</a>
+      {% endif %}
+      {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+          <span class="current">{{ p }}</span>
+        {% else %}
+          <a href="/admin/incidents?page={{ p }}{% if status_filter %}&status_filter={{ status_filter }}{% endif %}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page < total_pages %}
+        <a href="/admin/incidents?page={{ page + 1 }}{% if status_filter %}&status_filter={{ status_filter }}{% endif %}">Next →</a>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="card" style="text-align:center;padding:60px 32px;">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;margin-bottom:8px;">
+        NO REPORTS FOUND
+      </div>
+      <div style="font-size:0.875rem;color:var(--text-secondary);">
+        No incidents match the current filter.
+      </div>
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+
+<!-- Reject modal -->
+<div id="reject-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:900;align-items:center;justify-content:center;">
+  <div class="card" style="max-width:420px;width:90%;">
+    <div style="font-family:var(--font-mono);font-size:1rem;font-weight:600;margin-bottom:8px;">Reject report</div>
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">Reason <span class="text-muted">(optional)</span></label>
+      <textarea class="form-textarea" id="reject-note" placeholder="e.g. Duplicate, insufficient info..." rows="3"></textarea>
+    </div>
+    <div class="flex gap-1" style="justify-content:flex-end;">
+      <button class="btn btn--ghost" onclick="closeRejectModal()">Cancel</button>
+      <button class="btn btn--danger" id="confirm-reject-btn">Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:900;align-items:center;justify-content:center;">
+  <div class="card" style="max-width:400px;width:90%;">
+    <div style="font-family:var(--font-mono);font-size:1rem;font-weight:600;margin-bottom:8px;">Delete report</div>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:16px;">This permanently removes the report and all its votes. Cannot be undone.</p>
+    <div class="form-group">
+      <label class="form-label">Reason <span class="text-muted">(optional)</span></label>
+      <textarea class="form-textarea" id="delete-note" rows="2" placeholder="Reason for deletion..."></textarea>
+    </div>
+    <div class="flex gap-1" style="justify-content:flex-end;">
+      <button class="btn btn--ghost" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn--danger" id="confirm-delete-btn">Delete permanently</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let rejectTargetId = null;
+let deleteTargetId = null;
+
+async function verifyIncident(id) {
+  const btn = document.querySelector(`#row-${id} .btn--success`);
+  if (btn) { btn.textContent = '...'; btn.disabled = true; }
+  try {
+    const res  = await fetch(`/admin/incidents/${id}/verify`, { method: 'POST' });
+    const data = await res.json();
+    if (res.ok) {
+      updateRowStatus(id, 'verified');
+      showToast('Report verified', 'success');
+    } else {
+      showToast(data.detail || 'Error', 'error');
+      if (btn) { btn.textContent = '✓'; btn.disabled = false; }
+    }
+  } catch { showToast('Network error', 'error'); }
+}
+
+function openRejectModal(id) {
+  rejectTargetId = id;
+  document.getElementById('reject-note').value = '';
+  document.getElementById('reject-modal').style.display = 'flex';
+}
+function closeRejectModal() {
+  rejectTargetId = null;
+  document.getElementById('reject-modal').style.display = 'none';
+}
+
+document.getElementById('confirm-reject-btn').addEventListener('click', async () => {
+  if (!rejectTargetId) return;
+  const note = document.getElementById('reject-note').value.trim();
+  const btn  = document.getElementById('confirm-reject-btn');
+  btn.textContent = '...'; btn.disabled = true;
+  try {
+    const res  = await fetch(`/admin/incidents/${rejectTargetId}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      updateRowStatus(rejectTargetId, 'rejected');
+      closeRejectModal();
+      showToast('Report rejected', 'error');
+    } else { showToast(data.detail || 'Error', 'error'); }
+  } catch { showToast('Network error', 'error'); }
+  finally { btn.textContent = 'Reject'; btn.disabled = false; }
+});
+
+function openDeleteModal(id) {
+  deleteTargetId = id;
+  document.getElementById('delete-note').value = '';
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+function closeDeleteModal() {
+  deleteTargetId = null;
+  document.getElementById('delete-modal').style.display = 'none';
+}
+
+document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+  if (!deleteTargetId) return;
+  const note = document.getElementById('delete-note').value.trim();
+  const btn  = document.getElementById('confirm-delete-btn');
+  btn.textContent = '...'; btn.disabled = true;
+  try {
+    const res  = await fetch(`/admin/incidents/${deleteTargetId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      const row = document.getElementById(`row-${deleteTargetId}`);
+      if (row) { row.style.opacity = '0'; row.style.transition = 'opacity 0.3s'; setTimeout(() => row.remove(), 300); }
+      closeDeleteModal();
+      showToast('Report deleted', 'success');
+    } else { showToast(data.detail || 'Error', 'error'); }
+  } catch { showToast('Network error', 'error'); }
+  finally { btn.textContent = 'Delete permanently'; btn.disabled = false; }
+});
+
+// Update row status badge + action buttons without reload
+function updateRowStatus(id, newStatus) {
+  const row = document.getElementById(`row-${id}`);
+  if (!row) return;
+  const statusCell = row.querySelector('td:nth-child(7)');
+  if (statusCell) statusCell.innerHTML = `<span class="badge badge--${newStatus}">${newStatus}</span>`;
+  const actionsCell = row.querySelector('td:last-child div');
+  if (actionsCell) {
+    if (newStatus === 'verified') {
+      actionsCell.innerHTML = `
+        <button class="btn btn--danger btn--sm" onclick="openRejectModal('${id}')">Reject</button>
+        <button class="btn btn--ghost btn--sm"  onclick="openDeleteModal('${id}')">Del</button>`;
+    } else {
+      actionsCell.innerHTML = `
+        <button class="btn btn--success btn--sm" onclick="verifyIncident('${id}')">Verify</button>
+        <button class="btn btn--ghost btn--sm"   onclick="openDeleteModal('${id}')">Del</button>`;
+    }
+  }
+}
+
+// backdrop close
+['reject-modal','delete-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+      id === 'reject-modal' ? closeRejectModal() : closeDeleteModal();
+    }
+  });
+});
+</script>
+{% endblock %}

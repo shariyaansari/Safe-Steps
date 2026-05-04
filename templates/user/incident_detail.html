@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Incident Detail — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page main--centered">
+  <main class="main" style="max-width: 900px; width: 100%; padding: 24px;">
+    <div class="page-header" style="margin-bottom: 20px;">
+      <div class="page-header__eyebrow">Incident</div>
+      <div class="page-header__title">{{ incident.incident_type.value|title }}</div>
+      <div class="page-header__sub">{{ incident.area }}, {{ incident.city }}</div>
+    </div>
+
+    <div class="card" style="display: grid; gap: 14px;">
+      <div><strong>Status:</strong> {{ incident.status.value }}</div>
+      <div><strong>Occurred At:</strong> {{ incident.occurred_at.strftime('%d %b %Y, %H:%M') }}</div>
+      <div><strong>Reported At:</strong> {{ incident.reported_at.strftime('%d %b %Y, %H:%M') }}</div>
+      <div><strong>Description:</strong> {{ incident.description or 'No description provided.' }}</div>
+      {% if incident.image_url %}
+      <div>
+        <strong>Image:</strong><br>
+        <img src="{{ incident.image_url }}" alt="Incident image" style="margin-top: 8px; max-width: 100%; border-radius: 8px;" />
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top: 18px;">
+      <a href="/user/map" class="btn btn--ghost">← Back to map</a>
+    </div>
+  </main>
+</div>
+{% endblock %}

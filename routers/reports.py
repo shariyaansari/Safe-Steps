@@ -39,7 +39,7 @@ async def submit_get(
     request: Request,
     current_user: User = Depends(get_current_active_user)
 ):
-    return templates.TemplateResponse(request, "submit_report.html", {
+    return templates.TemplateResponse(request, "user/submit_report.html", {
         "request": request,
         "user": current_user,
         "incident_types": [t.value for t in IncidentType]
@@ -72,7 +72,7 @@ async def submit_post(
     try:
         i_type = IncidentType(incident_type)
     except ValueError:
-        return templates.TemplateResponse(request, "submit_report.html", {
+        return templates.TemplateResponse(request, "user/submit_report.html", {
             "request": request,
             "user": current_user,
             "incident_types": [t.value for t in IncidentType],
@@ -189,7 +189,7 @@ async def incident_detail(
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
 
-    return templates.TemplateResponse(request, "incident_detail.html", {
+    return templates.TemplateResponse(request, "user/incident_detail.html", {
         "request": request,
         "incident": incident,
         "user": current_user
