@@ -215,9 +215,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Leaflet heat plugin -->
-<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-
 <script>
 // ── State ──────────────────────────────────────────
 let map, heatLayer, pinsLayer;
@@ -225,6 +222,70 @@ let allIncidents     = [];
 let votedIncidentIds = new Set();
 let showHeatmap      = false;
 let ws               = null;
+
+// ── Script loaders (CDN fallback) ─────────────────
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === '1') {
+        resolve();
+      } else {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
+      }
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = false;
+    script.onload = () => {
+      script.dataset.loaded = '1';
+      resolve();
+    };
+    script.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(script);
+  });
+}
+
+async function ensureLeaflet() {
+  if (window.L && typeof window.L.map === 'function') return true;
+
+  const sources = [
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+    'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'
+  ];
+
+  for (const src of sources) {
+    try {
+      await loadScript(src);
+      if (window.L && typeof window.L.map === 'function') return true;
+    } catch (_) {
+      // try next source
+    }
+  }
+  return false;
+}
+
+async function ensureLeafletHeat() {
+  if (window.L && typeof window.L.heatLayer === 'function') return true;
+
+  const sources = [
+    'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js',
+    'https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js'
+  ];
+
+  for (const src of sources) {
+    try {
+      await loadScript(src);
+      if (window.L && typeof window.L.heatLayer === 'function') return true;
+    } catch (_) {
+      // try next source
+    }
+  }
+  return false;
+}
 
 // ── Init map ───────────────────────────────────────
 function initMap() {
@@ -321,6 +382,8 @@ function renderCard(inc, prepend = false) {
 
 // ── Render all incidents on map + panel ───────────
 function renderAll(incidents) {
+  if (!pinsLayer) return;
+
   pinsLayer.clearLayers();
   document.getElementById('incident-feed').innerHTML = '';
 
@@ -375,11 +438,19 @@ async function loadIncidents() {
 
 // ── Load heatmap data ──────────────────────────────
 async function loadHeatmap() {
+  if (!map) return;
+
   const type = document.getElementById('filter-type').value;
   let url    = `/analytics/heatmap?`;
   if (type) url += `incident_type=${type}`;
 
   try {
+    const heatReady = await ensureLeafletHeat();
+    if (!heatReady) {
+      showToast('Heatmap plugin failed to load.', 'error');
+      return;
+    }
+
     const res  = await fetch(url);
     const data = await res.json();
 
@@ -496,6 +567,11 @@ function connectWS() {
 
 // ── Map control buttons ────────────────────────────
 document.getElementById('btn-heatmap').addEventListener('click', function () {
+  if (!map || !pinsLayer) {
+    showToast('Map is still loading. Try again.', 'info', 2000);
+    return;
+  }
+
   showHeatmap = !showHeatmap;
   this.classList.toggle('active', showHeatmap);
 
@@ -509,6 +585,11 @@ document.getElementById('btn-heatmap').addEventListener('click', function () {
 });
 
 document.getElementById('btn-pins').addEventListener('click', function () {
+  if (!map || !pinsLayer) {
+    showToast('Map is still loading. Try again.', 'info', 2000);
+    return;
+  }
+
   if (map.hasLayer(pinsLayer)) {
     pinsLayer.remove();
     this.classList.remove('active');
@@ -523,11 +604,20 @@ document.getElementById('filter-type').addEventListener('change', loadIncidents)
 document.getElementById('filter-status').addEventListener('change', loadIncidents);
 
 // ── Boot ───────────────────────────────────────────
-(async () => {
+async function bootMapPage() {
+  const leafletReady = await ensureLeaflet();
+  if (!leafletReady) {
+    console.error('Leaflet failed to load.');
+    showToast('Map library failed to load. Please refresh.', 'error');
+    return;
+  }
+
   initMap();
   await loadMyVotes();
   await loadIncidents();
   connectWS();
-})();
+}
+
+document.addEventListener('DOMContentLoaded', bootMapPage);
 </script>
 {% endblock %}
