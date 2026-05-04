@@ -1,41 +1,47 @@
-# Web Framework & Server
-fastapi
-uvicorn[standard]
-python-multipart
-
-# Database & ORM
-SQLAlchemy
-asyncpg
-GeoAlchemy2
-alembic
-psycopg2-binary
-
-# Caching & Message Broker
-redis
-websockets
-
-# Background Tasks & Scheduling
-celery
-APScheduler
-
-# Machine Learning & Data
-scikit-learn
-xgboost
-pandas
-numpy
-
-# Web Scraping
-beautifulsoup4
-playwright
-requests
-
-# Authentication & Security
-python-jose[cryptography]
-passlib[bcrypt]
-bcrypt
-
-# Configuration & Utilities
-python-dotenv
-pydantic
-pydantic-settings
-cloudinary
+# ── Web framework ─────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.29.0          # ASGI server, [standard] includes websocket support
+python-multipart==0.0.9            # required for Form() and file uploads in FastAPI
+jinja2==3.1.4                      # HTML templates
+ 
+# ── Database ───────────────────────────────────────────
+sqlalchemy==2.0.30                 # async ORM
+asyncpg==0.29.0                    # async PostgreSQL driver
+geoalchemy2==0.15.1                # PostGIS geometry columns
+alembic==1.13.1                    # database migrations
+ 
+# ── Redis ──────────────────────────────────────────────
+redis==5.0.4                       # async Redis client (used for pub/sub + caching)
+ 
+# ── Auth & security ────────────────────────────────────
+python-jose[cryptography]==3.3.0   # JWT encode/decode
+passlib[bcrypt]==1.7.4             # password hashing
+bcrypt==4.1.3                      # bcrypt backend for passlib
+ 
+# ── Config ─────────────────────────────────────────────
+pydantic-settings==2.2.1           # reads .env into typed Settings class
+python-dotenv==1.0.1               # loads .env file
+ 
+# ── Media uploads ──────────────────────────────────────
+cloudinary==1.40.0                 # photo upload to Cloudinary CDN
+ 
+# ── Testing ────────────────────────────────────────────
+pytest==8.2.0
+pytest-asyncio==0.23.6
+httpx==0.27.0                      # async test client for FastAPI
+aiosqlite==0.20.0                  # in-memory SQLite for tests (no PostgreSQL needed)
+ 
+# ── Celery (background jobs — install when ready) ──────
+# celery[redis]==5.4.0
+# celery[beat]==5.4.0
+ 
+# ── Scraping (install when ready) ─────────────────────
+# feedparser==6.0.11
+# beautifulsoup4==4.12.3
+# httpx==0.27.0                    # already above
+ 
+# ── ML (install when ready) ───────────────────────────
+# scikit-learn==1.4.2
+# pandas==2.2.2
+# numpy==1.26.4
+# joblib==1.4.2                    # save/load trained model

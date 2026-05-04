@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}Users — Safe Steps{% endblock %}
+
+{% block content %}
+<div class="page page--sidebar">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__section">
+      <div class="sidebar__label">Admin panel</div>
+      <a href="/admin/dashboard" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        Dashboard
+      </a>
+      <a href="/admin/incidents" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Reports queue
+      </a>
+      <a href="/admin/users" class="sidebar__link active">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Users
+      </a>
+      <a href="/admin/audit-log" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Audit log
+      </a>
+    </div>
+    <div class="sidebar__section">
+      <div class="sidebar__label">Quick links</div>
+      <a href="/user/map"    class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        Live map
+      </a>
+      <a href="/auth/logout" class="sidebar__link">
+        <svg class="sidebar__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-header__eyebrow">Management</div>
+      <div class="page-header__title">Users</div>
+      <div class="page-header__sub">View and manage all registered accounts</div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="flex gap-1 mb-2">
+      <input
+        class="form-input"
+        type="text"
+        id="search-input"
+        placeholder="Search by username or email..."
+        style="max-width: 360px;"
+      />
+    </div>
+
+    {% if users %}
+    <div class="table-wrap">
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Last login</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr id="user-row-{{ u.id }}">
+            <td>
+              <span class="mono" style="font-size:0.875rem;color:var(--text-primary);">
+                {{ u.username }}
+              </span>
+            </td>
+            <td style="font-size:0.8rem;color:var(--text-secondary);">{{ u.email }}</td>
+            <td>
+              <span class="role-badge role-badge--{{ u.role.value }}">{{ u.role.value }}</span>
+            </td>
+            <td style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;">
+              {{ u.created_at.strftime('%d %b %Y') }}
+            </td>
+            <td style="font-size:0.78rem;color:var(--text-muted);white-space:nowrap;">
+              {% if u.last_login %}
+                {{ u.last_login.strftime('%d %b %Y') }}
+              {% else %}
+                <span style="color:var(--text-muted);">Never</span>
+              {% endif %}
+            </td>
+            <td id="status-{{ u.id }}">
+              {% if u.is_active %}
+                <span class="badge badge--verified">Active</span>
+              {% else %}
+                <span class="badge badge--rejected">Banned</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if u.role.value != 'admin' %}
+                {% if u.is_active %}
+                  <button
+                    class="btn btn--danger btn--sm"
+                    onclick="openBanModal('{{ u.id }}', '{{ u.username }}')"
+                  >
+                    Ban
+                  </button>
+                {% else %}
+                  <button
+                    class="btn btn--success btn--sm"
+                    onclick="unbanUser('{{ u.id }}')"
+                  >
+                    Unban
+                  </button>
+                {% endif %}
+              {% else %}
+                <span class="text-muted" style="font-size:0.72rem;">protected</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <div class="card" style="text-align:center;padding:60px;">
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;">
+        NO USERS FOUND
+      </div>
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+
+<!-- Ban modal -->
+<div id="ban-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:900;align-items:center;justify-content:center;">
+  <div class="card" style="max-width:420px;width:90%;">
+    <div style="font-family:var(--font-mono);font-size:1rem;font-weight:600;margin-bottom:6px;">
+      Ban user
+    </div>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:16px;">
+      Banning <strong id="ban-username" style="color:var(--text-primary);"></strong> will prevent them from logging in.
+    </p>
+    <div class="form-group">
+      <label class="form-label">Reason <span class="text-muted">(optional)</span></label>
+      <textarea
+        class="form-textarea"
+        id="ban-note"
+        placeholder="e.g. Spam reports, abusive behaviour..."
+        rows="3"
+      ></textarea>
+    </div>
+    <div class="flex gap-1" style="justify-content:flex-end;">
+      <button class="btn btn--ghost" onclick="closeBanModal()">Cancel</button>
+      <button class="btn btn--danger" id="confirm-ban-btn">Ban user</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let banTargetId = null;
+
+// ── Client-side search filter ──────────────────────
+document.getElementById('search-input').addEventListener('input', function () {
+  const q     = this.value.toLowerCase();
+  const rows  = document.querySelectorAll('#users-table tbody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+});
+
+// ── Ban modal ──────────────────────────────────────
+function openBanModal(userId, username) {
+  banTargetId = userId;
+  document.getElementById('ban-username').textContent = username;
+  document.getElementById('ban-note').value = '';
+  document.getElementById('ban-modal').style.display = 'flex';
+}
+
+function closeBanModal() {
+  banTargetId = null;
+  document.getElementById('ban-modal').style.display = 'none';
+}
+
+document.getElementById('confirm-ban-btn').addEventListener('click', async () => {
+  if (!banTargetId) return;
+  const note = document.getElementById('ban-note').value.trim();
+  const btn  = document.getElementById('confirm-ban-btn');
+  btn.textContent = 'Banning...';
+  btn.disabled    = true;
+
+  try {
+    const res  = await fetch(`/admin/users/${banTargetId}/ban`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      updateUserStatus(banTargetId, false);
+      closeBanModal();
+      showToast('User banned', 'error');
+    } else {
+      showToast(data.detail || 'Could not ban user', 'error');
+    }
+  } catch {
+    showToast('Network error', 'error');
+  } finally {
+    btn.textContent = 'Ban user';
+    btn.disabled    = false;
+  }
+});
+
+// ── Unban ──────────────────────────────────────────
+async function unbanUser(userId) {
+  try {
+    const res  = await fetch(`/admin/users/${userId}/unban`, { method: 'POST' });
+    const data = await res.json();
+
+    if (res.ok) {
+      updateUserStatus(userId, true);
+      showToast('User unbanned', 'success');
+    } else {
+      showToast(data.detail || 'Could not unban user', 'error');
+    }
+  } catch {
+    showToast('Network error', 'error');
+  }
+}
+
+// ── Update row status + button without reload ──────
+function updateUserStatus(userId, isActive) {
+  const statusCell  = document.getElementById(`status-${userId}`);
+  const actionsCell = document.querySelector(`#user-row-${userId} td:last-child`);
+
+  if (statusCell) {
+    statusCell.innerHTML = isActive
+      ? `<span class="badge badge--verified">Active</span>`
+      : `<span class="badge badge--rejected">Banned</span>`;
+  }
+
+  if (actionsCell) {
+    actionsCell.innerHTML = isActive
+      ? `<button class="btn btn--danger btn--sm" onclick="openBanModal('${userId}', '')">Ban</button>`
+      : `<button class="btn btn--success btn--sm" onclick="unbanUser('${userId}')">Unban</button>`;
+  }
+}
+
+// close on backdrop
+document.getElementById('ban-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeBanModal();
+});
+</script>
+{% endblock %}
