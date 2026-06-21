@@ -7,7 +7,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
-from core.database import Base 
+from core.database import Base
+
 
 # ─────────────────────────────────────────────
 # Enums
@@ -31,6 +32,11 @@ class IncidentStatus(str, enum.Enum):
     pending  = "pending"
     verified = "verified"
     rejected = "rejected"
+
+
+class IncidentSource(str, enum.Enum):
+    user_report  = "user_report"
+    news_scraper = "news_scraper"
 
 
 class AuditAction(str, enum.Enum):
@@ -73,8 +79,12 @@ class Incident(Base):
 
     id            = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
 
-    # who filed it
-    reported_by   = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    # who filed it — nullable because scraped incidents have no human reporter
+    reported_by   = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
+
+    # where this incident came from
+    source        = Column(Enum(IncidentSource), nullable=False, default=IncidentSource.user_report)
+    source_url    = Column(String(1000), nullable=True)         # original article URL — Google News links can be very long
 
     # who actioned it (nullable — only set after admin review)
     verified_by   = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)

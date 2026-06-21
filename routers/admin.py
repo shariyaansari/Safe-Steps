@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from sqlalchemy.orm import selectinload
 from datetime import datetime, timezone
 from typing import Optional
 from core.database import get_db
@@ -285,6 +286,10 @@ async def audit_log(
 
     result = await db.execute(
         select(AuditLog)
+        .options(
+            selectinload(AuditLog.admin),
+            selectinload(AuditLog.targeted_user),
+        )
         .order_by(AuditLog.created_at.desc())
         .offset(offset)
         .limit(page_size)
